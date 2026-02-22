@@ -23,16 +23,32 @@
 
     <!-- PAGE 2 -->
     <section id="page2" class="hidden text-center space-y-6">
-      <img id="testImage"
-        class="max-h-96 mx-auto object-contain hidden">
 
-      <div id="resultButtons" class="hidden space-x-4">
+      <!-- Loading Indicator -->
+      <div id="loadingIndicator" class="hidden flex justify-center">
+        <div class="w-8 h-8 border-4 border-neutral-300 border-t-black rounded-full animate-spin"></div>
+      </div>
+
+      <!-- Image -->
+      <div id="imageContainer" class="hidden">
+        <img id="testImage"
+          class="max-h-96 mx-auto object-contain">
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-neutral-200 h-2 mt-4 rounded overflow-hidden">
+          <div id="progressBar"
+            class="h-2 bg-black/60 w-0"></div>
+        </div>
+      </div>
+
+      <!-- Vertical Buttons -->
+      <div id="resultButtons" class="hidden flex flex-col space-y-4">
         <button id="passBtn"
-          class="bg-green-600 text-white px-6 py-2 rounded-lg">
+          class="bg-green-600 text-white px-6 py-2 rounded-lg w-full">
           Pass
         </button>
         <button id="failBtn"
-          class="bg-red-600 text-white px-6 py-2 rounded-lg">
+          class="border border-red-600 text-red-600 px-6 py-2 rounded-lg w-full">
           Fail
         </button>
       </div>
@@ -55,7 +71,7 @@
       </button>
 
       <button id="restartBtn"
-        class="bg-neutral-800 text-white px-6 py-2 rounded-lg w-full">
+        class="border border-black text-black px-6 py-2 rounded-lg w-full">
         Restart
       </button>
 
@@ -76,12 +92,16 @@ const page1 = document.getElementById('page1');
 const page2 = document.getElementById('page2');
 const page3 = document.getElementById('page3');
 
+const imageContainer = document.getElementById('imageContainer');
 const testImage = document.getElementById('testImage');
+const progressBar = document.getElementById('progressBar');
+
 const resultButtons = document.getElementById('resultButtons');
 const attemptInfo = document.getElementById('attemptInfo');
 const summaryText = document.getElementById('summaryText');
 const metaInfo = document.getElementById('metaInfo');
 const shareBtn = document.getElementById('shareBtn');
+const loadingIndicator = document.getElementById('loadingIndicator');
 
 testImage.src = imageURL;
 
@@ -89,20 +109,39 @@ testImage.src = imageURL;
 document.getElementById('startTest').addEventListener('click', () => {
   page1.classList.add('hidden');
   page2.classList.remove('hidden');
-  runExposure();
+  initiateExposure();
 });
 
-function runExposure() {
+function initiateExposure() {
   resultButtons.classList.add('hidden');
-  testImage.classList.remove('hidden');
-
-  attemptInfo.textContent =
-    `Duration: ${durations[currentDurationIndex]/1000}s | Attempt ${failCount + 1} of 3`;
+  imageContainer.classList.add('hidden');
+  loadingIndicator.classList.remove('hidden');
 
   setTimeout(() => {
-    testImage.classList.add('hidden');
+    loadingIndicator.classList.add('hidden');
+    runExposure();
+  }, 400);
+}
+
+function runExposure() {
+  const duration = durations[currentDurationIndex];
+
+  imageContainer.classList.remove('hidden');
+
+  attemptInfo.textContent =
+    `Duration: ${duration/1000}s | Attempt ${failCount + 1} of 3`;
+
+  progressBar.style.transition = 'none';
+  progressBar.style.width = '0%';
+  void progressBar.offsetWidth;
+
+  progressBar.style.transition = `width ${duration}ms linear`;
+  progressBar.style.width = '100%';
+
+  setTimeout(() => {
+    imageContainer.classList.add('hidden');
     resultButtons.classList.remove('hidden');
-  }, durations[currentDurationIndex]);
+  }, duration);
 }
 
 // PASS
@@ -142,10 +181,10 @@ document.getElementById('failBtn').addEventListener('click', () => {
     return;
   }
 
-  runExposure();
+  initiateExposure();
 });
 
-// SHARE (Generate + Share in one click)
+// SHARE
 shareBtn.addEventListener('click', async () => {
 
   shareBtn.disabled = true;
