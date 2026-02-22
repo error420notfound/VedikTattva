@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Exposure Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-neutral-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white w-full max-w-xl p-8 rounded-2xl shadow-xl">
+
+    <!-- PAGE 1 -->
+    <section id="page1" class="space-y-6 text-center">
+      <h1 class="text-2xl font-semibold">Perception Test</h1>
+      <p class="text-neutral-600">Press start to begin the test.</p>
+      <button id="startTest"
+        class="w-full bg-black text-white py-2 rounded-lg">
+        Start Test
+      </button>
+    </section>
+
+    <!-- PAGE 2 -->
+    <section id="page2" class="hidden text-center space-y-6">
+      <img id="testImage"
+        class="max-h-96 mx-auto object-contain hidden">
+
+      <div id="resultButtons" class="hidden space-x-4">
+        <button id="passBtn"
+          class="bg-green-600 text-white px-6 py-2 rounded-lg">
+          Pass
+        </button>
+        <button id="failBtn"
+          class="bg-red-600 text-white px-6 py-2 rounded-lg">
+          Fail
+        </button>
+      </div>
+
+      <p id="attemptInfo" class="text-sm text-neutral-500"></p>
+    </section>
+
+    <!-- PAGE 3 -->
+    <section id="page3" class="hidden text-center space-y-6">
+      <h2 class="text-2xl font-semibold">Test Summary</h2>
+      <p id="summaryText" class="text-lg"></p>
+
+      <button id="restartBtn"
+        class="bg-black text-white px-6 py-2 rounded-lg">
+        Restart
+      </button>
+    </section>
+
+  </div>
+
+<script>
+const imageURL = "https://raw.githubusercontent.com/error420notfound/webHTML/refs/heads/main/Frame%203.png";
+
+const durations = [500, 1000, 1500, 2000];
+
+let currentDurationIndex = 0;
+let failCount = 0;
+let totalAttempts = 0;
+let passedDuration = null;
+
+const page1 = document.getElementById('page1');
+const page2 = document.getElementById('page2');
+const page3 = document.getElementById('page3');
+
+const testImage = document.getElementById('testImage');
+const resultButtons = document.getElementById('resultButtons');
+const attemptInfo = document.getElementById('attemptInfo');
+const summaryText = document.getElementById('summaryText');
+
+testImage.src = imageURL;
+
+// Start Test
+document.getElementById('startTest').addEventListener('click', () => {
+  page1.classList.add('hidden');
+  page2.classList.remove('hidden');
+  runExposure();
+});
+
+function runExposure() {
+  resultButtons.classList.add('hidden');
+  testImage.classList.remove('hidden');
+
+  attemptInfo.textContent =
+    `Duration: ${durations[currentDurationIndex]/1000}s | Attempt ${failCount + 1} of 3`;
+
+  setTimeout(() => {
+    testImage.classList.add('hidden');
+    resultButtons.classList.remove('hidden');
+  }, durations[currentDurationIndex]);
+}
+
+// PASS
+document.getElementById('passBtn').addEventListener('click', () => {
+  totalAttempts++;
+  passedDuration = durations[currentDurationIndex];
+
+  page2.classList.add('hidden');
+  page3.classList.remove('hidden');
+
+  summaryText.textContent =
+    `Passed at ${passedDuration/1000}s after ${totalAttempts} total attempts.`;
+});
+
+// FAIL
+document.getElementById('failBtn').addEventListener('click', () => {
+  totalAttempts++;
+  failCount++;
+
+  if (failCount >= 3) {
+    currentDurationIndex++;
+    failCount = 0;
+  }
+
+  if (currentDurationIndex >= durations.length) {
+    // Failed all levels
+    page2.classList.add('hidden');
+    page3.classList.remove('hidden');
+
+    summaryText.textContent =
+      `Test failed. Maximum duration (2s) did not result in success after ${totalAttempts} attempts.`;
+    return;
+  }
+
+  runExposure();
+});
+
+// Restart
+document.getElementById('restartBtn').addEventListener('click', () => {
+  currentDurationIndex = 0;
+  failCount = 0;
+  totalAttempts = 0;
+  passedDuration = null;
+
+  page3.classList.add('hidden');
+  page1.classList.remove('hidden');
+});
+</script>
+
+</body>
+</html>
