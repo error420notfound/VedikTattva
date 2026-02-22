@@ -7,73 +7,82 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body class="bg-neutral-100 min-h-screen flex items-center justify-center">
+<body class="bg-neutral-100 min-h-screen flex md:items-center md:justify-center">
 
-  <div class="bg-white w-full max-w-xl p-8 rounded-2xl shadow-xl">
+  <div class="w-full md:max-w-xl md:bg-white md:rounded-2xl md:shadow-xl p-6 md:p-8 space-y-6">
 
     <!-- PAGE 1 -->
-    <section id="page1" class="space-y-6 text-center">
-      <h1 class="text-2xl font-semibold">Perception Test</h1>
+    <section id="page1" class="space-y-8 text-center pt-10 md:pt-0">
+      <h1 class="text-3xl md:text-2xl font-semibold">Perception Test</h1>
       <p class="text-neutral-600">Press start to begin the test.</p>
       <button id="startTest"
-        class="w-full bg-black text-white py-2 rounded-lg">
+        class="w-full h-12 bg-black text-white rounded-xl text-lg">
         Start Test
       </button>
     </section>
 
     <!-- PAGE 2 -->
-    <section id="page2" class="hidden text-center space-y-6">
+    <section id="page2" class="hidden flex flex-col min-h-[80vh] justify-between">
 
-      <!-- Loading Indicator -->
-      <div id="loadingIndicator" class="hidden flex justify-center">
-        <div class="w-8 h-8 border-4 border-neutral-300 border-t-black rounded-full animate-spin"></div>
-      </div>
+      <div class="space-y-6">
 
-      <!-- Image -->
-      <div id="imageContainer" class="hidden">
-        <img id="testImage"
-          class="max-h-96 mx-auto object-contain">
-
-        <!-- Progress Bar -->
-        <div class="w-full bg-neutral-200 h-2 mt-4 rounded overflow-hidden">
-          <div id="progressBar"
-            class="h-2 bg-black/60 w-0"></div>
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="hidden flex justify-center pt-20">
+          <div class="w-10 h-10 border-4 border-neutral-300 border-t-black rounded-full animate-spin"></div>
         </div>
+
+        <!-- Image + Progress -->
+        <div id="imageContainer" class="hidden text-center pt-10">
+          <img id="testImage"
+            class="max-h-[50vh] mx-auto object-contain">
+
+          <div class="w-full bg-neutral-200 h-3 mt-6 rounded-full overflow-hidden">
+            <div id="progressBar"
+              class="h-3 bg-black/60 w-0 rounded-full"></div>
+          </div>
+        </div>
+
+        <p id="attemptInfo" class="text-sm text-neutral-500 text-center pt-4"></p>
       </div>
 
-      <!-- Vertical Buttons -->
-      <div id="resultButtons" class="hidden flex flex-col space-y-4">
+      <!-- Sticky Action Buttons -->
+      <div id="resultButtons"
+           class="hidden flex flex-col space-y-4 pb-6">
+
         <button id="passBtn"
-          class="bg-green-600 text-white px-6 py-2 rounded-lg w-full">
+          class="h-12 bg-green-600 text-white rounded-xl text-lg">
           Pass
         </button>
+
         <button id="failBtn"
-          class="border border-red-600 text-red-600 px-6 py-2 rounded-lg w-full">
+          class="h-12 border border-red-600 text-red-600 rounded-xl text-lg">
           Fail
         </button>
+
       </div>
 
-      <p id="attemptInfo" class="text-sm text-neutral-500"></p>
     </section>
 
     <!-- PAGE 3 -->
-    <section id="page3" class="hidden text-center space-y-6">
+    <section id="page3" class="hidden space-y-8 pt-10 md:pt-0">
 
-      <div id="resultCard" class="p-6 border rounded-xl bg-white">
-        <h2 class="text-2xl font-semibold mb-4">Perception Test Result</h2>
-        <p id="summaryText" class="text-lg mb-2"></p>
-        <p id="metaInfo" class="text-sm text-neutral-500"></p>
+      <div id="resultCard" class="p-6 border rounded-2xl bg-white space-y-3">
+        <h2 class="text-2xl font-semibold text-center">Test Result</h2>
+        <p id="summaryText" class="text-lg text-center"></p>
+        <p id="metaInfo" class="text-sm text-neutral-500 text-center"></p>
       </div>
 
-      <button id="shareBtn"
-        class="bg-black text-white px-6 py-2 rounded-lg w-full">
-        Share Result
-      </button>
+      <div class="space-y-4">
+        <button id="shareBtn"
+          class="w-full h-12 bg-black text-white rounded-xl text-lg">
+          Share Result
+        </button>
 
-      <button id="restartBtn"
-        class="border border-black text-black px-6 py-2 rounded-lg w-full">
-        Restart
-      </button>
+        <button id="restartBtn"
+          class="w-full h-12 border border-black text-black rounded-xl text-lg">
+          Restart
+        </button>
+      </div>
 
     </section>
 
