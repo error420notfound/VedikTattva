@@ -5,6 +5,7 @@
   <title>Image Exposure Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body class="bg-neutral-100 min-h-screen flex items-center justify-center">
 
@@ -41,20 +42,29 @@
 
     <!-- PAGE 3 -->
     <section id="page3" class="hidden text-center space-y-6">
-      <h2 class="text-2xl font-semibold">Test Summary</h2>
-      <p id="summaryText" class="text-lg"></p>
+
+      <div id="resultCard" class="p-6 border rounded-xl bg-white">
+        <h2 class="text-2xl font-semibold mb-4">Perception Test Result</h2>
+        <p id="summaryText" class="text-lg mb-2"></p>
+        <p id="metaInfo" class="text-sm text-neutral-500"></p>
+      </div>
+
+      <button id="shareBtn"
+        class="bg-black text-white px-6 py-2 rounded-lg w-full">
+        Share Result
+      </button>
 
       <button id="restartBtn"
-        class="bg-black text-white px-6 py-2 rounded-lg">
+        class="bg-neutral-800 text-white px-6 py-2 rounded-lg w-full">
         Restart
       </button>
+
     </section>
 
   </div>
 
 <script>
 const imageURL = "https://raw.githubusercontent.com/error420notfound/webHTML/refs/heads/main/Frame%203.png";
-
 const durations = [500, 1000, 1500, 2000];
 
 let currentDurationIndex = 0;
@@ -70,10 +80,12 @@ const testImage = document.getElementById('testImage');
 const resultButtons = document.getElementById('resultButtons');
 const attemptInfo = document.getElementById('attemptInfo');
 const summaryText = document.getElementById('summaryText');
+const metaInfo = document.getElementById('metaInfo');
+const shareBtn = document.getElementById('shareBtn');
 
 testImage.src = imageURL;
 
-// Start Test
+// START
 document.getElementById('startTest').addEventListener('click', () => {
   page1.classList.add('hidden');
   page2.classList.remove('hidden');
@@ -102,7 +114,10 @@ document.getElementById('passBtn').addEventListener('click', () => {
   page3.classList.remove('hidden');
 
   summaryText.textContent =
-    `Passed at ${passedDuration/1000}s after ${totalAttempts} total attempts.`;
+    `Passed at ${passedDuration/1000}s after ${totalAttempts} attempts.`;
+
+  metaInfo.textContent =
+    `Escalation Level: ${currentDurationIndex + 1} of ${durations.length}`;
 });
 
 // FAIL
@@ -116,19 +131,55 @@ document.getElementById('failBtn').addEventListener('click', () => {
   }
 
   if (currentDurationIndex >= durations.length) {
-    // Failed all levels
     page2.classList.add('hidden');
     page3.classList.remove('hidden');
 
     summaryText.textContent =
-      `Test failed. Maximum duration (2s) did not result in success after ${totalAttempts} attempts.`;
+      `Test failed after ${totalAttempts} attempts.`;
+
+    metaInfo.textContent =
+      `Maximum duration (2s) reached without success.`;
     return;
   }
 
   runExposure();
 });
 
-// Restart
+// SHARE (Generate + Share in one click)
+shareBtn.addEventListener('click', async () => {
+
+  shareBtn.disabled = true;
+  shareBtn.textContent = "Generating...";
+
+  const card = document.getElementById('resultCard');
+  const canvas = await html2canvas(card);
+
+  const blob = await new Promise(resolve =>
+    canvas.toBlob(resolve, "image/png")
+  );
+
+  const file = new File([blob], "perception-test-result.png", {
+    type: "image/png"
+  });
+
+  if (navigator.share && navigator.canShare({ files: [file] })) {
+    await navigator.share({
+      title: "Perception Test Result",
+      text: "Here is my test result.",
+      files: [file]
+    });
+  } else {
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL("image/png");
+    link.download = "perception-test-result.png";
+    link.click();
+  }
+
+  shareBtn.disabled = false;
+  shareBtn.textContent = "Share Result";
+});
+
+// RESTART
 document.getElementById('restartBtn').addEventListener('click', () => {
   currentDurationIndex = 0;
   failCount = 0;
