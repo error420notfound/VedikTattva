@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Style Test</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aboreto&family=Asul:wght@400;700&family=Italiana&family=Julius+Sans+One&family=Poller+One&family=Red+Rose:wght@300..700&family=Tenor+Sans&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&icon_names=contrast" />
+
+<style>
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+}
+
+@media (min-width: 370px) { html { font-size: 16px; } }
+@media (min-width: 810px) { html { font-size: 16px; } }
+@media (min-width: 1200px) { html { font-size: 18px; } }
+@media (min-width: 1920px) { html { font-size: 10px; } }
+@media (min-width: 2560px) { html { font-size: 24px; } }
+
+:root {
+  --font-body: 'Tenor Sans', sans-serif;
+  --font-heading: 'Italiana', serif;
+}
+
+body.light { background: #f2f2f7; color: #1c1c1e; }
+body.dark { background: #000; color: #e5e5ea; }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(360px, 45vw, 420px), 1fr));
+  gap: clamp(12px, 2.5vw, 24px);
+  padding: clamp(8px, 2vw, 24px);
+}
+
+.grid-wraper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.grid-item {
+  padding: 1rem;
+  border-radius: 2rem;
+  white-space: pre-line;
+}
+
+.size-label {
+  font-family: 'Asul', serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgb(255, 56, 60);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.size-label .px-value { color: #2570D4; }
+.size-label .style-text { color: #FB932E; }
+
+.grid-wraper:nth-child(1) .grid-item { font-size: 0.75rem; text-transform: uppercase; }
+.grid-wraper:nth-child(2) .grid-item { font-size: 1rem; }
+.grid-wraper:nth-child(3) .grid-item { font-size: 1.125rem; }
+.grid-wraper:nth-child(4) .grid-item { font-size: 1.5rem; }
+.grid-wraper:nth-child(5) .grid-item { font-size: 2rem; }
+.grid-wraper:nth-child(6) .grid-item { font-size: 3rem; }
+.grid-wraper:nth-child(7) .grid-item { font-size: 5rem; }
+
+.menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  border: 2px solid rgba(255, 56, 60, 0.2);
+  border-radius: 3rem;
+  transform: translateX(-50%);
+  position: sticky;
+  bottom: 2rem;
+  left: 50%;
+  padding: 0.5rem 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.font-selector {
+  font-size: 1rem;
+}
+
+.theme-toggle {
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body class="light">
+
+<div class="grid-container">
+
+<div class="grid-wraper">
+  <div class="size-label" data-rem="0.75">0.75rem <div class="style-text">Body</div></div>
+  <div class="grid-item">VEDIK TATTVA
+Suddh aur Satvik, Vedik Tattva.</div>
+</div>
+
+<div class="grid-wraper">
+  <div class="size-label" data-rem="1">1rem <div class="style-text">Body</div></div>
+  <div class="grid-item">VEDIK TATTVA
+Suddh aur Satvik, Vedik Tattva.</div>
+</div>
+
+<div class="grid-wraper">
+  <div class="size-label" data-rem="1.125">1.125rem <div class="style-text">Body</div></div>
+  <div class="grid-item">VEDIK TATTVA
+Suddh aur Satvik, Vedik Tattva.</div>
+</div>
+
+<div class="grid-wraper">
+  <div class="size-label" data-rem="1.5">1.5rem <div class="style-text">Heading</div></div>
+  <div class="grid-item">VEDIK TATTVA
+Suddh aur Satvik, Vedik Tattva.</div>
+</div>
+
+<div class="grid-wraper">
+  <div class="size-label" data-rem="2">2rem <div class="style-text">Heading</div></div>
+  <div class="grid-item">VEDIK TATTVA
+Suddh aur Satvik, Vedik Tattva.</div>
+</div>
+
+<div class="grid-wraper">
+  <div class="size-label" data-rem="3">3rem <div class="style-text">Heading</div></div>
+  <div class="grid-item">VEDIK TATTVA
+Suddh aur Satvik, Vedik Tattva.</div>
+</div>
+
+<div class="grid-wraper">
+  <div class="size-label" data-rem="5">5rem <div class="style-text">Heading</div></div>
+  <div class="grid-item">VEDIK TATTVA
+Suddh aur Satvik, Vedik Tattva.</div>
+</div>
+
+</div>
+
+<div class="menu">
+<select id="fontSelect" class="font-selector">
+  <option value="'Tenor Sans', sans-serif">Tenor Sans</option>
+  <option value="'Aboreto', cursive">Aboreto</option>
+  <option value="'Asul', serif">Asul</option>
+  <option value="'Italiana', serif">Italiana</option>
+  <option value="'Julius Sans One', sans-serif">Julius Sans One</option>
+  <option value="'Poller One', cursive">Poller One</option>
+  <option value="'Red Rose', serif">Red Rose</option>
+</select>
+
+<button class="theme-toggle" id="themeToggle">
+  <span class="material-symbols-outlined">contrast</span>
+</button>
+</div>
+
+<script>
+
+function applyFontRoles() {
+  document.querySelectorAll('.grid-wraper').forEach(wrapper => {
+    const role = wrapper.querySelector('.style-text')?.textContent.trim();
+    const item = wrapper.querySelector('.grid-item');
+
+    if (role === "Heading") {
+      item.style.fontFamily = getComputedStyle(document.documentElement)
+        .getPropertyValue('--font-heading');
+    } else {
+      item.style.fontFamily = getComputedStyle(document.documentElement)
+        .getPropertyValue('--font-body');
+    }
+  });
+}
+
+document.getElementById('fontSelect').addEventListener('change', function() {
+  document.documentElement.style.setProperty('--font-body', this.value);
+  document.documentElement.style.setProperty('--font-heading', this.value);
+  applyFontRoles();
+});
+
+document.getElementById("themeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  document.body.classList.toggle("light");
+});
+
+applyFontRoles();
+
+</script>
+
+</body>
+</html>
