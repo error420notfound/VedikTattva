@@ -1,311 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Perception Test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<meta charset="UTF-8">
+<title>Visual Perception Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-neutral-100 min-h-screen flex md:items-center md:justify-center">
 
-  <div class="w-full md:max-w-xl md:bg-white md:rounded-2xl md:shadow-xl p-6 md:p-8 space-y-8">
+<div class="w-full flex flex-col items-center">
 
-    <!-- PAGE 1 -->
-    <section id="page1" class="space-y-6 pt-8">
-      <h1 class="text-2xl font-semibold">Visual Perception Test</h1>
+<!-- MAIN CARD -->
+<div class="w-full md:max-w-xl md:bg-white md:rounded-2xl md:shadow-xl p-6 md:p-8 space-y-8">
 
-      <input id="nameInput" type="text"
-        placeholder="Full Name"
-        class="w-full h-12 px-4 border rounded-xl">
+<!-- PAGE 1 -->
+<section id="page1" class="space-y-6 pt-8">
 
-      <input id="phoneInput" type="tel"
-        placeholder="Phone Number"
-        class="w-full h-12 px-4 border rounded-xl">
+<h1 class="text-2xl font-semibold">Visual Perception Test</h1>
 
-      <button id="startTest"
-        class="w-full h-12 bg-black text-white rounded-xl text-lg">
-        Start Test
-      </button>
-    </section>
+<p class="text-sm text-neutral-600">
+An image will briefly appear. After it disappears,
+confirm whether you clearly recognized key elements.
+</p>
 
-    <!-- PAGE 2 -->
-    <section id="page2" class="hidden flex flex-col min-h-[80vh] justify-between">
+<input id="nameInput" type="text"
+placeholder="Full Name"
+class="w-full h-12 px-4 border rounded-xl">
 
-      <div class="space-y-6">
+<input id="phoneInput" type="tel"
+placeholder="Phone Number"
+class="w-full h-12 px-4 border rounded-xl">
 
-        <div id="loadingIndicator" class="hidden flex justify-center pt-20">
-          <div class="w-10 h-10 border-4 border-neutral-300 border-t-black rounded-full animate-spin"></div>
-        </div>
+<button id="startTest"
+class="w-full h-12 bg-black text-white rounded-xl text-lg">
+Start Test
+</button>
 
-        <div id="imageContainer" class="hidden text-center pt-10">
-          <img id="testImage"
-            class="max-h-[50vh] mx-auto object-contain">
+</section>
 
-          <div class="w-full bg-neutral-200 h-3 mt-6 rounded-full overflow-hidden">
-            <div id="progressBar"
-              class="h-3 bg-black/60 w-0 rounded-full"></div>
-          </div>
-        </div>
 
-        <p id="attemptInfo" class="text-sm text-neutral-500 text-center pt-4"></p>
-      </div>
+<!-- PAGE 2 -->
+<section id="page2" class="hidden flex flex-col min-h-[80vh] justify-between">
 
-      <!-- Decision -->
-      <div id="decisionSection" class="hidden space-y-5 pb-6">
+<div class="space-y-6">
 
-        <p class="text-sm text-neutral-600 font-medium">
-          Confirm before selecting Pass:
-        </p>
+<div id="loadingIndicator" class="hidden flex justify-center pt-20">
+<div class="w-10 h-10 border-4 border-neutral-300 border-t-black rounded-full animate-spin"></div>
+</div>
 
-        <div class="space-y-2 text-sm">
-          <label class="flex items-center space-x-2">
-            <input type="checkbox" class="criteriaCheckbox w-4 h-4">
-            <span>I recognized the main subject clearly</span>
-          </label>
+<div id="imageContainer" class="hidden text-center pt-10">
+<img id="testImage"
+class="max-h-[50vh] mx-auto object-contain"
+src="https://raw.githubusercontent.com/error420notfound/webHTML/refs/heads/main/Frame%203.png">
 
-          <label class="flex items-center space-x-2">
-            <input type="checkbox" class="criteriaCheckbox w-4 h-4">
-            <span>I identified at least one distinct detail</span>
-          </label>
+<div class="w-full bg-neutral-200 h-3 mt-6 rounded-full overflow-hidden">
+<div id="progressBar"
+class="h-3 bg-black/60 w-0 rounded-full"></div>
+</div>
+</div>
 
-          <label class="flex items-center space-x-2">
-            <input type="checkbox" class="criteriaCheckbox w-4 h-4">
-            <span>I am confident in my recognition</span>
-          </label>
-        </div>
+<p id="attemptInfo" class="text-sm text-neutral-500 text-center pt-4"></p>
 
-        <div class="flex flex-col space-y-4">
-          <button id="passBtn"
-            class="h-12 bg-green-600 text-white rounded-xl text-lg opacity-50 cursor-not-allowed"
-            disabled>
-            Pass
-          </button>
+</div>
 
-          <button id="failBtn"
-            class="h-12 border border-red-600 text-red-600 rounded-xl text-lg">
-            Fail
-          </button>
-        </div>
+<!-- Decision Section -->
+<div id="decisionSection" class="hidden space-y-5 pb-6">
 
-      </div>
+<p class="text-sm text-neutral-600 font-medium">
+Confirm before selecting Pass:
+</p>
 
-    </section>
+<div class="space-y-2 text-sm">
+<label class="flex items-center space-x-2">
+<input type="checkbox" class="criteriaCheckbox w-4 h-4">
+<span>I recognized the main subject clearly</span>
+</label>
 
-    <!-- PAGE 3 -->
-    <section id="page3" class="hidden space-y-6 pt-6">
+<label class="flex items-center space-x-2">
+<input type="checkbox" class="criteriaCheckbox w-4 h-4">
+<span>I identified at least one distinct detail</span>
+</label>
 
-      <div id="resultCard" class="p-6 border rounded-2xl bg-white space-y-4">
+<label class="flex items-center space-x-2">
+<input type="checkbox" class="criteriaCheckbox w-4 h-4">
+<span>I am confident in my recognition</span>
+</label>
+</div>
 
-        <h2 class="text-2xl font-semibold text-center">Test Result</h2>
+<div class="flex flex-col space-y-4">
+<button id="passBtn"
+class="h-12 bg-green-600 text-white rounded-xl text-lg opacity-50 cursor-not-allowed"
+disabled>
+Pass
+</button>
 
-        <div class="text-center text-sm text-neutral-500">
-          <p id="resultName"></p>
-          <p id="resultPhone"></p>
-        </div>
+<button id="failBtn"
+class="h-12 border border-red-600 text-red-600 rounded-xl text-lg">
+Fail
+</button>
+</div>
 
-        <p id="summaryText" class="text-lg text-center"></p>
-        <p id="metaInfo" class="text-sm text-neutral-500 text-center"></p>
+</div>
+</section>
 
-        <!-- Selected Checklist -->
-        <div id="selectedCriteriaContainer" class="text-sm space-y-1 pt-2">
-          <p class="font-medium">Confirmed Observations:</p>
-          <ul id="selectedCriteriaList" class="list-disc list-inside text-neutral-600"></ul>
-        </div>
 
-      </div>
+<!-- PAGE 3 -->
+<section id="page3" class="hidden space-y-6 pt-6">
 
-      <button id="shareBtn"
-        class="w-full h-12 bg-black text-white rounded-xl text-lg">
-        Share Result
-      </button>
+<div id="resultCard" class="p-6 border rounded-2xl bg-white space-y-4">
 
-      <button id="restartBtn"
-        class="w-full h-12 border border-black text-black rounded-xl text-lg">
-        Restart
-      </button>
+<h2 class="text-2xl font-semibold text-center">Test Result</h2>
 
-    </section>
+<div class="text-center text-sm text-neutral-500">
+<p id="resultName"></p>
+<p id="resultPhone"></p>
+</div>
 
-  </div>
+<p id="summaryText" class="text-lg text-center"></p>
+<p id="metaInfo" class="text-sm text-neutral-500 text-center"></p>
+
+<div class="text-sm space-y-1 pt-2">
+<p class="font-medium">Confirmed Observations:</p>
+<ul id="selectedCriteriaList"
+class="list-disc list-inside text-neutral-600"></ul>
+</div>
+
+<div class="pt-4 text-xs text-neutral-500 text-center">
+<p id="timestampText"></p>
+</div>
+
+</div>
+
+<div class="space-y-4">
+
+<button id="whatsappShareBtn"
+class="w-full h-12 bg-green-600 text-white rounded-xl text-lg">
+Share via WhatsApp
+</button>
+
+<button id="downloadCsvBtn"
+class="w-full h-12 bg-black text-white rounded-xl text-lg">
+Download CSV
+</button>
+
+<button id="restartBtn"
+class="w-full h-12 border border-black text-black rounded-xl text-lg">
+Restart
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+<!-- REGULATORY FOOTER -->
+<div id="regulatoryFooter"
+class="max-w-xl text-xs text-neutral-500 text-center px-6 py-6 space-y-2">
+
+<p>Designed by HS108 for internal testing.</p>
+
+<p>
+By proceeding, you agree to share your name and phone number
+with the X Party for further contact and evaluation.
+</p>
+
+<p>Designed by HS108 for Vedik Tattva.</p>
+
+</div>
+
+</div>
 
 <script>
-const imageURL = "https://raw.githubusercontent.com/error420notfound/webHTML/refs/heads/main/Frame%203.png";
-const durations = [500, 1000, 1500, 2000];
 
-let currentDurationIndex = 0;
-let failCount = 0;
-let totalAttempts = 0;
-let passedDuration = null;
-let selectedCriteria = [];
+const durations = [500,1000,1500,2000];
+const WHATSAPP_NUMBER = "919999999999"; // replace
 
-let userName = "";
-let userPhone = "";
+let currentDurationIndex=0;
+let failCount=0;
+let totalAttempts=0;
+let passedDuration=null;
+let selectedCriteria=[];
+let userName="";
+let userPhone="";
 
-const page1 = document.getElementById('page1');
-const page2 = document.getElementById('page2');
-const page3 = document.getElementById('page3');
+const page1=document.getElementById('page1');
+const page2=document.getElementById('page2');
+const page3=document.getElementById('page3');
+const regulatoryFooter=document.getElementById('regulatoryFooter');
 
-const nameInput = document.getElementById('nameInput');
-const phoneInput = document.getElementById('phoneInput');
+const progressBar=document.getElementById('progressBar');
+const imageContainer=document.getElementById('imageContainer');
+const decisionSection=document.getElementById('decisionSection');
+const loadingIndicator=document.getElementById('loadingIndicator');
 
-const imageContainer = document.getElementById('imageContainer');
-const testImage = document.getElementById('testImage');
-const progressBar = document.getElementById('progressBar');
+const passBtn=document.getElementById('passBtn');
+const failBtn=document.getElementById('failBtn');
+const checkboxes=document.querySelectorAll('.criteriaCheckbox');
 
-const decisionSection = document.getElementById('decisionSection');
-const passBtn = document.getElementById('passBtn');
-const failBtn = document.getElementById('failBtn');
-const checkboxes = document.querySelectorAll('.criteriaCheckbox');
+const nameInput=document.getElementById('nameInput');
+const phoneInput=document.getElementById('phoneInput');
 
-const summaryText = document.getElementById('summaryText');
-const metaInfo = document.getElementById('metaInfo');
-const resultName = document.getElementById('resultName');
-const resultPhone = document.getElementById('resultPhone');
-const selectedCriteriaList = document.getElementById('selectedCriteriaList');
+const resultName=document.getElementById('resultName');
+const resultPhone=document.getElementById('resultPhone');
+const summaryText=document.getElementById('summaryText');
+const metaInfo=document.getElementById('metaInfo');
+const selectedCriteriaList=document.getElementById('selectedCriteriaList');
+const timestampText=document.getElementById('timestampText');
 
-const shareBtn = document.getElementById('shareBtn');
-const loadingIndicator = document.getElementById('loadingIndicator');
-
-testImage.src = imageURL;
-
-// Enable Pass only if 2+ selected
-checkboxes.forEach(cb => {
-  cb.addEventListener('change', () => {
-    const checkedCount = [...checkboxes].filter(c => c.checked).length;
-    passBtn.disabled = checkedCount < 2;
-    passBtn.classList.toggle('opacity-50', checkedCount < 2);
-  });
+checkboxes.forEach(cb=>{
+cb.addEventListener('change',()=>{
+const count=[...checkboxes].filter(c=>c.checked).length;
+passBtn.disabled=count<2;
+passBtn.classList.toggle('opacity-50',count<2);
+});
 });
 
-// START
-document.getElementById('startTest').addEventListener('click', () => {
-  userName = nameInput.value.trim();
-  userPhone = phoneInput.value.trim();
-  page1.classList.add('hidden');
-  page2.classList.remove('hidden');
-  initiateExposure();
+document.getElementById('startTest').addEventListener('click',()=>{
+userName=nameInput.value.trim();
+userPhone=phoneInput.value.trim();
+page1.classList.add('hidden');
+page2.classList.remove('hidden');
+regulatoryFooter.classList.add('hidden');
+initiateExposure();
 });
 
-function initiateExposure() {
-  decisionSection.classList.add('hidden');
-  imageContainer.classList.add('hidden');
-  loadingIndicator.classList.remove('hidden');
-
-  setTimeout(() => {
-    loadingIndicator.classList.add('hidden');
-    runExposure();
-  }, 400);
+function initiateExposure(){
+decisionSection.classList.add('hidden');
+imageContainer.classList.add('hidden');
+loadingIndicator.classList.remove('hidden');
+setTimeout(()=>{
+loadingIndicator.classList.add('hidden');
+runExposure();
+},400);
 }
 
-function runExposure() {
-  const duration = durations[currentDurationIndex];
-  imageContainer.classList.remove('hidden');
+function runExposure(){
+const duration=durations[currentDurationIndex];
+imageContainer.classList.remove('hidden');
 
-  progressBar.style.transition = 'none';
-  progressBar.style.width = '0%';
-  void progressBar.offsetWidth;
-  progressBar.style.transition = `width ${duration}ms linear`;
-  progressBar.style.width = '100%';
+progressBar.style.transition='none';
+progressBar.style.width='0%';
+void progressBar.offsetWidth;
+progressBar.style.transition=`width ${duration}ms linear`;
+progressBar.style.width='100%';
 
-  setTimeout(() => {
-    imageContainer.classList.add('hidden');
-    decisionSection.classList.remove('hidden');
-    checkboxes.forEach(c => c.checked = false);
-    passBtn.disabled = true;
-    passBtn.classList.add('opacity-50');
-  }, duration);
+setTimeout(()=>{
+imageContainer.classList.add('hidden');
+decisionSection.classList.remove('hidden');
+checkboxes.forEach(c=>c.checked=false);
+passBtn.disabled=true;
+passBtn.classList.add('opacity-50');
+},duration);
 }
 
-// PASS
-passBtn.addEventListener('click', () => {
-  totalAttempts++;
-  passedDuration = durations[currentDurationIndex];
-
-  selectedCriteria = [...checkboxes]
-    .filter(cb => cb.checked)
-    .map(cb => cb.nextElementSibling.textContent);
-
-  showResults();
+passBtn.addEventListener('click',()=>{
+totalAttempts++;
+passedDuration=durations[currentDurationIndex];
+selectedCriteria=[...checkboxes]
+.filter(cb=>cb.checked)
+.map(cb=>cb.nextElementSibling.textContent);
+showResults();
 });
 
-// FAIL
-failBtn.addEventListener('click', () => {
-  totalAttempts++;
-  failCount++;
-
-  if (failCount >= 3) {
-    currentDurationIndex++;
-    failCount = 0;
-  }
-
-  if (currentDurationIndex >= durations.length) {
-    showResults(true);
-    return;
-  }
-
-  initiateExposure();
+failBtn.addEventListener('click',()=>{
+totalAttempts++;
+failCount++;
+if(failCount>=3){
+currentDurationIndex++;
+failCount=0;
+}
+if(currentDurationIndex>=durations.length){
+showResults(true);
+return;
+}
+initiateExposure();
 });
 
-function showResults(failedAll = false) {
-  page2.classList.add('hidden');
-  page3.classList.remove('hidden');
+function showResults(failedAll=false){
+page2.classList.add('hidden');
+page3.classList.remove('hidden');
+regulatoryFooter.classList.remove('hidden');
 
-  resultName.textContent = userName ? `Name: ${userName}` : "";
-  resultPhone.textContent = userPhone ? `Phone: ${userPhone}` : "";
+resultName.textContent=userName?`Name: ${userName}`:"";
+resultPhone.textContent=userPhone?`Phone: ${userPhone}`:"";
 
-  selectedCriteriaList.innerHTML = "";
-  selectedCriteria.forEach(item => {
-    const li = document.createElement('li');
-    li.textContent = item;
-    selectedCriteriaList.appendChild(li);
-  });
+selectedCriteriaList.innerHTML="";
+selectedCriteria.forEach(item=>{
+const li=document.createElement('li');
+li.textContent=item;
+selectedCriteriaList.appendChild(li);
+});
 
-  if (failedAll) {
-    summaryText.textContent = `Test failed after ${totalAttempts} attempts.`;
-    metaInfo.textContent = `Maximum duration reached without success.`;
-  } else {
-    summaryText.textContent =
-      `Passed at ${passedDuration/1000}s after ${totalAttempts} attempts.`;
-    metaInfo.textContent =
-      `Escalation Level: ${currentDurationIndex + 1} of ${durations.length}`;
-  }
+if(failedAll){
+summaryText.textContent=`Test failed after ${totalAttempts} attempts.`;
+metaInfo.textContent=`Maximum duration reached without success.`;
+}else{
+summaryText.textContent=`Passed at ${passedDuration/1000}s after ${totalAttempts} attempts.`;
+metaInfo.textContent=`Escalation Level: ${currentDurationIndex+1} of ${durations.length}`;
+}
 }
 
-// SHARE
-shareBtn.addEventListener('click', async () => {
-  shareBtn.disabled = true;
-  shareBtn.textContent = "Generating...";
+function generateTimestamp(){
+return new Date().toISOString();
+}
 
-  const canvas = await html2canvas(document.getElementById('resultCard'));
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+function generateCSV(){
+const timestamp=generateTimestamp();
+timestampText.textContent=`Generated on: ${timestamp}`;
 
-  const file = new File([blob], "perception-test-result.png", { type: "image/png" });
+const checklistString=selectedCriteria.join(" | ");
+const resultStatus=passedDuration?`Passed at ${passedDuration/1000}s`:"Failed";
 
-  if (navigator.share && navigator.canShare({ files: [file] })) {
-    await navigator.share({ files: [file] });
-  } else {
-    const link = document.createElement('a');
-    link.href = canvas.toDataURL("image/png");
-    link.download = "perception-test-result.png";
-    link.click();
-  }
+const csv=
+`Name,Phone,Result,Duration,Attempts,Escalation Level,Checklist,Timestamp
+"${userName}","${userPhone}","${resultStatus}","${passedDuration?passedDuration/1000:"N/A"}","${totalAttempts}","${currentDurationIndex+1}","${checklistString}","${timestamp}"`;
 
-  shareBtn.disabled = false;
-  shareBtn.textContent = "Share Result";
+return {
+blob:new Blob([csv],{type:"text/csv;charset=utf-8;"}),
+fileName:`perception_test_${Date.now()}.csv`
+};
+}
+
+function downloadCSV(blob,fileName){
+const link=document.createElement("a");
+link.href=URL.createObjectURL(blob);
+link.download=fileName;
+link.click();
+}
+
+document.getElementById('downloadCsvBtn').addEventListener('click',()=>{
+const {blob,fileName}=generateCSV();
+downloadCSV(blob,fileName);
 });
 
-// RESTART
-document.getElementById('restartBtn').addEventListener('click', () => {
-  currentDurationIndex = 0;
-  failCount = 0;
-  totalAttempts = 0;
-  passedDuration = null;
-  selectedCriteria = [];
+document.getElementById('whatsappShareBtn').addEventListener('click',()=>{
+const {blob,fileName}=generateCSV();
+downloadCSV(blob,fileName);
 
-  page3.classList.add('hidden');
-  page1.classList.remove('hidden');
+const message=encodeURIComponent(
+`Perception Test Result\nName: ${userName}\nPhone: ${userPhone}\nPlease attach the downloaded CSV file.`
+);
+
+window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`,"_blank");
 });
+
+document.getElementById('restartBtn').addEventListener('click',()=>{
+currentDurationIndex=0;
+failCount=0;
+totalAttempts=0;
+passedDuration=null;
+selectedCriteria=[];
+timestampText.textContent="";
+page3.classList.add('hidden');
+page1.classList.remove('hidden');
+});
+
 </script>
 
 </body>
