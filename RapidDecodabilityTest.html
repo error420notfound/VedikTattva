@@ -335,15 +335,39 @@ const {blob,fileName}=generateCSV();
 downloadCSV(blob,fileName);
 });
 
-document.getElementById('whatsappShareBtn').addEventListener('click',()=>{
-const {blob,fileName}=generateCSV();
-downloadCSV(blob,fileName);
+document.getElementById('whatsappShareBtn').addEventListener('click', () => {
 
-const message=encodeURIComponent(
-`Perception Test Result\nName: ${userName}\nPhone: ${userPhone}\nPlease attach the downloaded CSV file.`
-);
+  const { blob, fileName } = generateCSV();
+  downloadCSV(blob, fileName); // still downloads CSV for record
 
-window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`,"_blank");
+  const timestamp = generateTimestamp();
+  timestampText.textContent = `Generated on: ${timestamp}`;
+
+  const checklistString = selectedCriteria.length
+    ? selectedCriteria.map(item => `• ${item}`).join('\n')
+    : "None";
+
+  const resultStatus = passedDuration
+    ? `Passed at ${passedDuration/1000}s`
+    : "Failed";
+
+  const message = encodeURIComponent(
+`Visual Perception Test Result
+
+Name: ${userName}
+Phone: ${userPhone}
+
+Result: ${resultStatus}
+Attempts: ${totalAttempts}
+Escalation Level: ${currentDurationIndex + 1}
+
+Confirmed Observations:
+${checklistString}
+
+Timestamp: ${timestamp}`
+  );
+
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, "_blank");
 });
 
 document.getElementById('restartBtn').addEventListener('click',()=>{
