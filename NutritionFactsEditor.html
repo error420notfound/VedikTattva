@@ -50,17 +50,18 @@
   .editable {
     outline: none;
     cursor: text;
-    min-width: 4px;
-    display: inline-block;
+    display: inline;        /* inline avoids block-level spacing artifacts */
   }
+  /* Edit indicators ONLY shown on screen, never bleed into export */
   #label.edit-mode .editable {
-    border-bottom: 1px dashed #2563eb;
-    background: rgba(37,99,235,0.04);
+    border-bottom: 1.5px dashed rgba(37,99,235,0.7);
+    padding-bottom: 1px;
   }
   #label.edit-mode .editable:focus {
     border-bottom: 2px solid #2563eb;
-    background: rgba(37,99,235,0.1);
-    border-radius: 2px;
+    background: rgba(37,99,235,0.08);
+    border-radius: 1px;
+    padding-bottom: 1px;
   }
 
   /* ── Panel Styles ── */
@@ -462,57 +463,100 @@
     label.style.fontSize = val + 'px';
   }
 
-  // ── Shared capture helper ──
+  // ── Clean clone capture — never touches the original label ──
   async function captureLabel(scale) {
-    const wasEdit = editMode;
-    if (editMode) toggleEdit();
     await document.fonts.ready;
-    await new Promise(r => setTimeout(r, 500));
-    const lw = label.offsetWidth;
-    const lh = label.offsetHeight;
-    const canvas = await html2canvas(label, {
+
+    // 1. Deep-clone the label
+    const clone = label.cloneNode(true);
+
+    // 2. Strip ALL edit-mode visual artifacts from the clone
+    clone.classList.remove('edit-mode');
+    clone.removeAttribute('contenteditable');
+
+    // 3. Nuke every editable span's styling and contenteditable
+    clone.querySelectorAll('.editable').forEach(el => {
+      el.removeAttribute('contenteditable');
+      el.style.border        = 'none';
+      el.style.borderBottom  = 'none';
+      el.style.outline       = 'none';
+      el.style.background    = 'transparent';
+      el.style.boxShadow     = 'none';
+      el.style.display       = 'inline';   // collapse min-width artifact
+    });
+
+    // 4. Copy all computed inline styles from original label
+    //    so custom colours / widths / fonts are preserved
+    const computed = window.getComputedStyle(label);
+    clone.style.fontFamily   = computed.fontFamily;
+    clone.style.fontSize     = computed.fontSize;
+    clone.style.color        = label.style.color        || '#000000';
+    clone.style.background   = label.style.background   || '#ffffff';
+    clone.style.borderColor  = label.style.borderColor  || '#000000';
+    clone.style.borderWidth  = label.style.borderWidth  || '2px';
+    clone.style.width        = label.offsetWidth + 'px';
+
+    // 5. Position off-screen so it lays out but isn't visible
+    clone.style.position     = 'fixed';
+    clone.style.top          = '-9999px';
+    clone.style.left         = '-9999px';
+    clone.style.zIndex       = '-1';
+    clone.style.pointerEvents = 'none';
+    document.body.appendChild(clone);
+
+    // 6. Let the browser lay out the clone
+    await new Promise(r => setTimeout(r, 300));
+
+    const lw = clone.offsetWidth;
+    const lh = clone.offsetHeight;
+
+    // 7. Capture the clean clone
+    const canvas = await html2canvas(clone, {
       scale,
       backgroundColor: label.style.backgroundColor || '#ffffff',
       useCORS: true,
       allowTaint: false,
       logging: false,
-      width: lw,
+      width:  lw,
       height: lh,
-      scrollX: -window.scrollX,
-      scrollY: -window.scrollY,
-      removeContainer: true,
+      scrollX: 0,
+      scrollY: 0,
+      removeContainer: false,
     });
-    if (wasEdit) toggleEdit();
-    return canvas;
+
+    // 8. Remove clone
+    document.body.removeChild(clone);
+    return { canvas, lw, lh };
   }
 
   // ── Export PDF ──
   async function exportPDF() {
     showToast('Generating PDF…');
     try {
-      const canvas = await captureLabel(3);
+      const { canvas, lw, lh } = await captureLabel(3);
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
-      const w = label.offsetWidth * 0.2645;
-      const h = label.offsetHeight * 0.2645;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [w + 10, h + 10] });
-      pdf.addImage(imgData, 'PNG', 5, 5, w, h, undefined, 'FAST');
+      const mmW = lw * 0.2645;
+      const mmH = lh * 0.2645;
+      const margin = 4;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [mmW + margin*2, mmH + margin*2] });
+      pdf.addImage(imgData, 'PNG', margin, margin, mmW, mmH, undefined, 'NONE');
       pdf.save('nutrition-label.pdf');
       showToast('PDF downloaded!');
-    } catch(e) { showToast('Error generating PDF'); console.error(e); }
+    } catch(e) { showToast('Error: ' + e.message); console.error(e); }
   }
 
   // ── Export PNG ──
   async function exportPNG() {
     showToast('Generating PNG…');
     try {
-      const canvas = await captureLabel(4);
+      const { canvas } = await captureLabel(4);
       const link = document.createElement('a');
       link.download = 'nutrition-label.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
       showToast('PNG downloaded!');
-    } catch(e) { showToast('Error generating PNG'); console.error(e); }
+    } catch(e) { showToast('Error: ' + e.message); console.error(e); }
   }
 
   // ── Reset ──
