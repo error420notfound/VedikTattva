@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -17,465 +16,460 @@
     --line: rgba(26,26,24,0.10);
   }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; }
 
-body {
-font-family: ‘DM Sans’, sans-serif;
-background: var(–bone);
-color: var(–ink);
-font-size: 16px;
-line-height: 1.6;
--webkit-font-smoothing: antialiased;
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bone);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
 
-/* ─── NAV ─── */
-nav {
-position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-display: flex; align-items: center; justify-content: space-between;
-padding: 20px 40px;
-background: rgba(244,241,235,0.92);
-backdrop-filter: blur(12px);
-border-bottom: 1px solid var(–line);
-}
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(244,241,235,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
 
-.logo {
-font-family: ‘Playfair Display’, serif;
-font-size: 1.15rem;
-letter-spacing: 0.12em;
-text-transform: uppercase;
-color: var(–ink);
-text-decoration: none;
-}
-.logo span { color: var(–copper); }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo span { color: var(--copper); }
 
-.nav-links {
-display: flex; gap: 32px; list-style: none;
-}
-.nav-links a {
-font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
-color: var(–mid); text-decoration: none; font-weight: 500;
-transition: color 0.2s;
-}
-.nav-links a:hover { color: var(–ink); }
+  .nav-links {
+    display: flex; gap: 32px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--mid); text-decoration: none; font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
 
-.nav-cta {
-font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
-font-weight: 500; background: var(–ink); color: var(–bone);
-padding: 10px 24px; border: none; cursor: pointer;
-transition: background 0.2s;
-}
-.nav-cta:hover { background: var(–copper); }
+  .nav-cta {
+    font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+    font-weight: 500; background: var(--ink); color: var(--bone);
+    padding: 10px 24px; border: none; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--copper); }
 
-/* ─── HERO ─── */
-#hero {
-min-height: 100vh;
-display: grid;
-grid-template-columns: 1fr 1fr;
-padding-top: 80px;
-}
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+  }
 
-.hero-left {
-display: flex; flex-direction: column; justify-content: center;
-padding: 80px 60px 80px 40px;
-}
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 60px 80px 40px;
+  }
 
-.hero-label {
-font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
-color: var(–copper); font-weight: 500; margin-bottom: 20px;
-display: flex; align-items: center; gap: 12px;
-}
-.hero-label::before {
-content: ‘’; display: block; width: 32px; height: 1px; background: var(–copper);
-}
+  .hero-label {
+    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--copper); font-weight: 500; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-label::before {
+    content: ''; display: block; width: 32px; height: 1px; background: var(--copper);
+  }
 
-h1 {
-font-family: ‘Playfair Display’, serif;
-font-size: clamp(2.4rem, 4vw, 3.8rem);
-line-height: 1.12;
-font-weight: 500;
-letter-spacing: -0.01em;
-margin-bottom: 28px;
-}
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    line-height: 1.12;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+  }
 
-h1 em { font-style: italic; color: var(–copper); }
+  h1 em { font-style: italic; color: var(--copper); }
 
-.hero-desc {
-font-size: 0.95rem; color: var(–mid); line-height: 1.8;
-max-width: 420px; margin-bottom: 40px;
-font-weight: 300;
-}
+  .hero-desc {
+    font-size: 0.95rem; color: var(--mid); line-height: 1.8;
+    max-width: 420px; margin-bottom: 40px;
+    font-weight: 300;
+  }
 
-.hero-stats {
-display: flex; gap: 32px; margin-bottom: 48px;
-}
-.stat { border-left: 2px solid var(–copper); padding-left: 16px; }
-.stat-num {
-font-family: ‘Playfair Display’, serif;
-font-size: 1.5rem; color: var(–ink); font-weight: 600;
-}
-.stat-label {
-font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
-color: var(–mid);
-}
+  .hero-stats {
+    display: flex; gap: 32px; margin-bottom: 48px;
+  }
+  .stat { border-left: 2px solid var(--copper); padding-left: 16px; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; color: var(--ink); font-weight: 600;
+  }
+  .stat-label {
+    font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--mid);
+  }
 
-.cta-group { display: flex; gap: 16px; align-items: center; }
+  .cta-group { display: flex; gap: 16px; align-items: center; }
 
-.btn-primary {
-background: var(–ink); color: var(–bone);
-padding: 16px 40px; font-size: 0.82rem;
-letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500;
-border: none; cursor: pointer; transition: background 0.2s;
-font-family: ‘DM Sans’, sans-serif;
-text-decoration: none; display: inline-block;
-}
-.btn-primary:hover { background: var(–copper); }
+  .btn-primary {
+    background: var(--ink); color: var(--bone);
+    padding: 16px 40px; font-size: 0.82rem;
+    letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500;
+    border: none; cursor: pointer; transition: background 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--copper); }
 
-.btn-secondary {
-font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
-font-weight: 500; color: var(–mid); text-decoration: none;
-border-bottom: 1px solid currentColor; padding-bottom: 2px;
-transition: color 0.2s;
-}
-.btn-secondary:hover { color: var(–ink); }
+  .btn-secondary {
+    font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 500; color: var(--mid); text-decoration: none;
+    border-bottom: 1px solid currentColor; padding-bottom: 2px;
+    transition: color 0.2s;
+  }
+  .btn-secondary:hover { color: var(--ink); }
 
-/* HERO RIGHT */
-.hero-right {
-position: relative; overflow: hidden;
-background: linear-gradient(145deg, #ede9e0, #f7f4ee);
-display: flex; align-items: center; justify-content: center;
-}
+  /* HERO RIGHT */
+  .hero-right {
+    position: relative; overflow: hidden;
+    background: linear-gradient(145deg, #ede9e0, #f7f4ee);
+    display: flex; align-items: center; justify-content: center;
+  }
 
-.jar-stage {
-position: relative; width: 320px; height: 420px;
-}
+  .jar-stage {
+    position: relative; width: 320px; height: 420px;
+  }
 
-/* SVG JAR */
-.jar-svg { width: 100%; height: 100%; }
+  /* SVG JAR */
+  .jar-svg { width: 100%; height: 100%; }
 
-.hero-badge {
-position: absolute; bottom: 60px; right: -20px;
-background: var(–ink); color: var(–bone);
-padding: 18px 22px;
-font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
-}
-.hero-badge strong {
-display: block; font-family: ‘Playfair Display’, serif;
-font-size: 1.1rem; letter-spacing: 0;
-}
+  .hero-badge {
+    position: absolute; bottom: 60px; right: -20px;
+    background: var(--ink); color: var(--bone);
+    padding: 18px 22px;
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .hero-badge strong {
+    display: block; font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; letter-spacing: 0;
+  }
 
-/* ─── SECTION COMMONS ─── */
-section { padding: 100px 40px; }
+  /* ─── SECTION COMMONS ─── */
+  section { padding: 100px 40px; }
 
-.section-label {
-font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
-color: var(–copper); font-weight: 500; margin-bottom: 12px;
-}
+  .section-label {
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--copper); font-weight: 500; margin-bottom: 12px;
+  }
 
-h2 {
-font-family: ‘Playfair Display’, serif;
-font-size: clamp(1.8rem, 3vw, 2.6rem);
-font-weight: 500; line-height: 1.18;
-margin-bottom: 16px;
-}
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 500; line-height: 1.18;
+    margin-bottom: 16px;
+  }
 
-.section-sub {
-font-size: 0.92rem; color: var(–mid); max-width: 480px; line-height: 1.8;
-font-weight: 300;
-}
+  .section-sub {
+    font-size: 0.92rem; color: var(--mid); max-width: 480px; line-height: 1.8;
+    font-weight: 300;
+  }
 
-hr.rule {
-border: none; border-top: 1px solid var(–line); margin: 0;
-}
+  hr.rule {
+    border: none; border-top: 1px solid var(--line); margin: 0;
+  }
 
-/* ─── PRODUCTS ─── */
-#products { background: var(–ink); color: var(–bone); }
-#products .section-label { color: var(–copper-light); }
-#products .section-sub { color: rgba(244,241,235,0.55); }
+  /* ─── PRODUCTS ─── */
+  #products { background: var(--ink); color: var(--bone); }
+  #products .section-label { color: var(--copper-light); }
+  #products .section-sub { color: rgba(244,241,235,0.55); }
 
-.products-header {
-max-width: 1200px; margin: 0 auto 64px;
-display: flex; justify-content: space-between; align-items: flex-end;
-flex-wrap: wrap; gap: 24px;
-}
+  .products-header {
+    max-width: 1200px; margin: 0 auto 64px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 24px;
+  }
 
-.product-grid {
-max-width: 1200px; margin: 0 auto;
-display: grid;
-grid-template-columns: 2fr 1fr 1fr 1fr;
-gap: 2px;
-}
+  .product-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2px;
+  }
 
-.product-card {
-background: #242420;
-padding: 40px 32px;
-display: flex; flex-direction: column;
-transition: background 0.25s;
-cursor: pointer;
-position: relative;
-overflow: hidden;
-}
-.product-card:hover { background: #2e2e2a; }
-.product-card.featured { background: #2a2a26; }
+  .product-card {
+    background: #242420;
+    padding: 40px 32px;
+    display: flex; flex-direction: column;
+    transition: background 0.25s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-card:hover { background: #2e2e2a; }
+  .product-card.featured { background: #2a2a26; }
 
-.product-card::after {
-content: ‘’; position: absolute;
-bottom: 0; left: 0; right: 0; height: 2px;
-background: var(–copper); transform: scaleX(0); transform-origin: left;
-transition: transform 0.3s;
-}
-.product-card:hover::after { transform: scaleX(1); }
+  .product-card::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 2px;
+    background: var(--copper); transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .product-card:hover::after { transform: scaleX(1); }
 
-.product-icon {
-width: 80px; height: 80px; margin-bottom: 28px;
-}
+  .product-icon {
+    width: 80px; height: 80px; margin-bottom: 28px;
+  }
 
-.product-tag {
-font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
-color: var(–copper-light); margin-bottom: 10px; font-weight: 500;
-}
+  .product-tag {
+    font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--copper-light); margin-bottom: 10px; font-weight: 500;
+  }
 
-.product-name {
-font-family: ‘Playfair Display’, serif;
-font-size: 1.4rem; font-weight: 500;
-margin-bottom: 16px; color: var(–bone);
-}
-.featured .product-name { font-size: 1.9rem; }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 500;
+    margin-bottom: 16px; color: var(--bone);
+  }
+  .featured .product-name { font-size: 1.9rem; }
 
-.product-benefits {
-list-style: none; margin-bottom: 28px; flex: 1;
-}
-.product-benefits li {
-font-size: 0.82rem; color: rgba(244,241,235,0.55);
-padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
-display: flex; gap: 10px; align-items: flex-start; font-weight: 300;
-}
-.product-benefits li::before {
-content: ‘—’; color: var(–copper); flex-shrink: 0; margin-top: 1px;
-font-size: 0.78rem;
-}
+  .product-benefits {
+    list-style: none; margin-bottom: 28px; flex: 1;
+  }
+  .product-benefits li {
+    font-size: 0.82rem; color: rgba(244,241,235,0.55);
+    padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; gap: 10px; align-items: flex-start; font-weight: 300;
+  }
+  .product-benefits li::before {
+    content: '—'; color: var(--copper); flex-shrink: 0; margin-top: 1px;
+    font-size: 0.78rem;
+  }
 
-.product-price {
-font-family: ‘Playfair Display’, serif;
-font-size: 1.2rem; color: var(–bone); margin-bottom: 20px;
-}
-.product-price sub { font-size: 0.65rem; font-family: ‘DM Sans’, sans-serif; color: rgba(244,241,235,0.4); }
+  .product-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; color: var(--bone); margin-bottom: 20px;
+  }
+  .product-price sub { font-size: 0.65rem; font-family: 'DM Sans', sans-serif; color: rgba(244,241,235,0.4); }
 
-.product-btn {
-background: none; border: 1px solid rgba(255,255,255,0.15);
-color: var(–bone); padding: 12px 20px;
-font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
-cursor: pointer; font-family: ‘DM Sans’, sans-serif;
-transition: border-color 0.2s, background 0.2s;
-font-weight: 500;
-}
-.product-btn:hover { border-color: var(–copper); background: rgba(181,101,29,0.12); }
-.featured .product-btn {
-background: var(–copper); border-color: var(–copper); color: var(–bone);
-}
-.featured .product-btn:hover { background: var(–copper-light); border-color: var(–copper-light); }
+  .product-btn {
+    background: none; border: 1px solid rgba(255,255,255,0.15);
+    color: var(--bone); padding: 12px 20px;
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s, background 0.2s;
+    font-weight: 500;
+  }
+  .product-btn:hover { border-color: var(--copper); background: rgba(181,101,29,0.12); }
+  .featured .product-btn {
+    background: var(--copper); border-color: var(--copper); color: var(--bone);
+  }
+  .featured .product-btn:hover { background: var(--copper-light); border-color: var(--copper-light); }
 
-/* ─── VERIFICATION ─── */
-#verification { background: var(–bone); }
-.verify-wrap {
-max-width: 1200px; margin: 0 auto;
-display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
-}
+  /* ─── VERIFICATION ─── */
+  #verification { background: var(--bone); }
+  .verify-wrap {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+  }
 
-.verify-table {
-border-top: 2px solid var(–ink);
-}
-.verify-row {
-display: grid; grid-template-columns: 1fr auto auto;
-padding: 18px 0; border-bottom: 1px solid var(–line);
-gap: 20px; align-items: center;
-}
-.verify-param {
-font-size: 0.82rem; font-weight: 500; color: var(–ink);
-}
-.verify-value {
-font-family: ‘Playfair Display’, serif;
-font-size: 1.05rem; text-align: right;
-}
-.verify-status {
-font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
-padding: 4px 10px;
-background: rgba(181,101,29,0.1); color: var(–copper);
-font-weight: 500;
-}
-.verify-status.pass { background: rgba(40,120,60,0.08); color: #2a7a3c; }
+  .verify-table {
+    border-top: 2px solid var(--ink);
+  }
+  .verify-row {
+    display: grid; grid-template-columns: 1fr auto auto;
+    padding: 18px 0; border-bottom: 1px solid var(--line);
+    gap: 20px; align-items: center;
+  }
+  .verify-param {
+    font-size: 0.82rem; font-weight: 500; color: var(--ink);
+  }
+  .verify-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; text-align: right;
+  }
+  .verify-status {
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px;
+    background: rgba(181,101,29,0.1); color: var(--copper);
+    font-weight: 500;
+  }
+  .verify-status.pass { background: rgba(40,120,60,0.08); color: #2a7a3c; }
 
-.cert-row {
-margin-top: 40px; display: flex; gap: 24px; flex-wrap: wrap;
-}
-.cert-chip {
-font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
-border: 1px solid var(–ink); padding: 10px 18px; font-weight: 500;
-color: var(–ink);
-}
+  .cert-row {
+    margin-top: 40px; display: flex; gap: 24px; flex-wrap: wrap;
+  }
+  .cert-chip {
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid var(--ink); padding: 10px 18px; font-weight: 500;
+    color: var(--ink);
+  }
 
-.verify-right h2 { margin-bottom: 24px; }
-.verify-right p {
-font-size: 0.9rem; color: var(–mid); line-height: 1.8; margin-bottom: 20px;
-font-weight: 300;
-}
+  .verify-right h2 { margin-bottom: 24px; }
+  .verify-right p {
+    font-size: 0.9rem; color: var(--mid); line-height: 1.8; margin-bottom: 20px;
+    font-weight: 300;
+  }
 
-.process-steps { margin-top: 40px; }
-.step {
-display: grid; grid-template-columns: 40px 1fr;
-gap: 20px; padding: 20px 0; border-bottom: 1px solid var(–line);
-align-items: start;
-}
-.step-num {
-font-family: ‘Playfair Display’, serif;
-font-size: 0.9rem; color: var(–copper); padding-top: 2px;
-}
-.step-title { font-weight: 500; font-size: 0.88rem; margin-bottom: 4px; }
-.step-desc { font-size: 0.8rem; color: var(–mid); font-weight: 300; }
+  .process-steps { margin-top: 40px; }
+  .step {
+    display: grid; grid-template-columns: 40px 1fr;
+    gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem; color: var(--copper); padding-top: 2px;
+  }
+  .step-title { font-weight: 500; font-size: 0.88rem; margin-bottom: 4px; }
+  .step-desc { font-size: 0.8rem; color: var(--mid); font-weight: 300; }
 
-/* ─── COMPARISON ─── */
-#compare { background: #f0ece3; }
-.compare-wrap { max-width: 900px; margin: 0 auto; }
-.compare-header { margin-bottom: 64px; }
+  /* ─── COMPARISON ─── */
+  #compare { background: #f0ece3; }
+  .compare-wrap { max-width: 900px; margin: 0 auto; }
+  .compare-header { margin-bottom: 64px; }
 
-.compare-table {
-width: 100%; border-collapse: collapse;
-border-top: 2px solid var(–ink);
-}
-.compare-table th {
-padding: 20px 24px; text-align: left;
-font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
-font-weight: 500; border-bottom: 1px solid var(–line);
-color: var(–mid);
-}
-.compare-table th:not(:first-child) { text-align: center; }
-.compare-table .col-highlight {
-background: var(–ink); color: var(–bone);
-font-family: ‘Playfair Display’, serif;
-font-size: 0.9rem; letter-spacing: 0; font-weight: 500;
-}
-.compare-table td {
-padding: 18px 24px; border-bottom: 1px solid var(–line);
-font-size: 0.85rem;
-}
-.compare-table td:not(:first-child) { text-align: center; }
-.compare-table td.col-highlight { background: rgba(26,26,24,0.04); }
-.compare-table .row-label { font-weight: 500; font-size: 0.82rem; }
-.compare-table .row-sub { color: var(–mid); font-size: 0.75rem; font-weight: 300; }
+  .compare-table {
+    width: 100%; border-collapse: collapse;
+    border-top: 2px solid var(--ink);
+  }
+  .compare-table th {
+    padding: 20px 24px; text-align: left;
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 500; border-bottom: 1px solid var(--line);
+    color: var(--mid);
+  }
+  .compare-table th:not(:first-child) { text-align: center; }
+  .compare-table .col-highlight {
+    background: var(--ink); color: var(--bone);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem; letter-spacing: 0; font-weight: 500;
+  }
+  .compare-table td {
+    padding: 18px 24px; border-bottom: 1px solid var(--line);
+    font-size: 0.85rem;
+  }
+  .compare-table td:not(:first-child) { text-align: center; }
+  .compare-table td.col-highlight { background: rgba(26,26,24,0.04); }
+  .compare-table .row-label { font-weight: 500; font-size: 0.82rem; }
+  .compare-table .row-sub { color: var(--mid); font-size: 0.75rem; font-weight: 300; }
 
-.tick { color: #2a7a3c; font-size: 1rem; }
-.cross { color: #c0392b; font-size: 0.85rem; }
-.dash { color: var(–mid); }
+  .tick { color: #2a7a3c; font-size: 1rem; }
+  .cross { color: #c0392b; font-size: 0.85rem; }
+  .dash { color: var(--mid); }
 
-/* Reviews */
-.reviews-strip {
-max-width: 900px; margin: 60px auto 0;
-display: grid; grid-template-columns: 1fr 1fr 1fr;
-gap: 2px;
-}
-.review-card {
-background: var(–bone); padding: 32px 28px;
-}
-.review-stars { color: var(–copper); font-size: 0.85rem; margin-bottom: 14px; }
-.review-text {
-font-size: 0.85rem; color: var(–ink); line-height: 1.7;
-font-weight: 300; margin-bottom: 20px; font-style: italic;
-}
-.review-author { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(–mid); font-weight: 500; }
+  /* Reviews */
+  .reviews-strip {
+    max-width: 900px; margin: 60px auto 0;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+  }
+  .review-card {
+    background: var(--bone); padding: 32px 28px;
+  }
+  .review-stars { color: var(--copper); font-size: 0.85rem; margin-bottom: 14px; }
+  .review-text {
+    font-size: 0.85rem; color: var(--ink); line-height: 1.7;
+    font-weight: 300; margin-bottom: 20px; font-style: italic;
+  }
+  .review-author { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); font-weight: 500; }
 
-/* ─── FOOTER / CTA ─── */
-#cta-footer {
-background: var(–ink); color: var(–bone); padding: 100px 40px;
-text-align: center;
-}
-#cta-footer h2 { color: var(–bone); margin-bottom: 16px; }
-#cta-footer .section-sub { color: rgba(244,241,235,0.5); margin: 0 auto 48px; }
-.cta-foot-group { display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; }
+  /* ─── FOOTER / CTA ─── */
+  #cta-footer {
+    background: var(--ink); color: var(--bone); padding: 100px 40px;
+    text-align: center;
+  }
+  #cta-footer h2 { color: var(--bone); margin-bottom: 16px; }
+  #cta-footer .section-sub { color: rgba(244,241,235,0.5); margin: 0 auto 48px; }
+  .cta-foot-group { display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; }
 
-.btn-whatsapp {
-background: none; border: 1px solid rgba(255,255,255,0.2);
-color: var(–bone); padding: 16px 36px;
-font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
-cursor: pointer; font-family: ‘DM Sans’, sans-serif;
-font-weight: 500; transition: border-color 0.2s;
-display: inline-flex; align-items: center; gap: 10px;
-text-decoration: none;
-}
-.btn-whatsapp:hover { border-color: #25d366; color: #25d366; }
+  .btn-whatsapp {
+    background: none; border: 1px solid rgba(255,255,255,0.2);
+    color: var(--bone); padding: 16px 36px;
+    font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-weight: 500; transition: border-color 0.2s;
+    display: inline-flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .btn-whatsapp:hover { border-color: #25d366; color: #25d366; }
 
-footer {
-background: #141412; color: rgba(244,241,235,0.35);
-padding: 28px 40px;
-display: flex; justify-content: space-between; align-items: center;
-font-size: 0.72rem; letter-spacing: 0.08em;
-flex-wrap: wrap; gap: 12px;
-}
+  footer {
+    background: #141412; color: rgba(244,241,235,0.35);
+    padding: 28px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.72rem; letter-spacing: 0.08em;
+    flex-wrap: wrap; gap: 12px;
+  }
 
-/* ─── ANIMATIONS ─── */
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(24px); }
-to { opacity: 1; transform: translateY(0); }
-}
-@keyframes float {
-0%, 100% { transform: translateY(0); }
-50% { transform: translateY(-10px); }
-}
-@keyframes shimmer {
-from { opacity: 0.7; }
-to { opacity: 1; }
-}
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes shimmer {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+  }
 
-.hero-left > * {
-animation: fadeUp 0.7s ease both;
-}
-.hero-left > *:nth-child(1) { animation-delay: 0.1s; }
-.hero-left > *:nth-child(2) { animation-delay: 0.2s; }
-.hero-left > *:nth-child(3) { animation-delay: 0.3s; }
-.hero-left > *:nth-child(4) { animation-delay: 0.4s; }
-.hero-left > *:nth-child(5) { animation-delay: 0.5s; }
+  .hero-left > * {
+    animation: fadeUp 0.7s ease both;
+  }
+  .hero-left > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero-left > *:nth-child(2) { animation-delay: 0.2s; }
+  .hero-left > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-left > *:nth-child(4) { animation-delay: 0.4s; }
+  .hero-left > *:nth-child(5) { animation-delay: 0.5s; }
 
-.jar-stage { animation: float 6s ease-in-out infinite; }
+  .jar-stage { animation: float 6s ease-in-out infinite; }
 
-/* ─── RESPONSIVE ─── */
-@media (max-width: 900px) {
-nav { padding: 16px 20px; }
-.nav-links { display: none; }
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
 
-```
-#hero { grid-template-columns: 1fr; min-height: auto; }
-.hero-left { padding: 60px 20px 40px; }
-.hero-right { min-height: 360px; }
-.jar-stage { width: 220px; height: 290px; }
+    #hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 60px 20px 40px; }
+    .hero-right { min-height: 360px; }
+    .jar-stage { width: 220px; height: 290px; }
 
-section { padding: 64px 20px; }
+    section { padding: 64px 20px; }
 
-.product-grid { grid-template-columns: 1fr 1fr; }
-.product-card.featured { grid-column: span 2; }
+    .product-grid { grid-template-columns: 1fr 1fr; }
+    .product-card.featured { grid-column: span 2; }
 
-.verify-wrap { grid-template-columns: 1fr; gap: 48px; }
+    .verify-wrap { grid-template-columns: 1fr; gap: 48px; }
 
-.reviews-strip { grid-template-columns: 1fr; }
+    .reviews-strip { grid-template-columns: 1fr; }
 
-.compare-table th, .compare-table td { padding: 14px 12px; font-size: 0.78rem; }
+    .compare-table th, .compare-table td { padding: 14px 12px; font-size: 0.78rem; }
 
-footer { flex-direction: column; text-align: center; }
-```
+    footer { flex-direction: column; text-align: center; }
+  }
 
-}
-
-@media (max-width: 540px) {
-.product-grid { grid-template-columns: 1fr; }
-.product-card.featured { grid-column: auto; }
-.hero-stats { flex-wrap: wrap; }
-}
+  @media (max-width: 540px) {
+    .product-grid { grid-template-columns: 1fr; }
+    .product-card.featured { grid-column: auto; }
+    .hero-stats { flex-wrap: wrap; }
+  }
 </style>
-
 </head>
 <body>
 
 <!-- NAV -->
-
 <nav>
   <a href="#" class="logo">Vedic<span>.</span>Tattva</a>
   <ul class="nav-links">
@@ -487,7 +481,6 @@ footer { flex-direction: column; text-align: center; }
 </nav>
 
 <!-- HERO -->
-
 <section id="hero">
   <div class="hero-left">
     <p class="hero-label">Lab-Verified · Cold-Pressed · Batch-Traceable</p>
@@ -558,7 +551,6 @@ footer { flex-direction: column; text-align: center; }
 <hr class="rule">
 
 <!-- PRODUCTS -->
-
 <section id="products">
   <div class="products-header">
     <div>
@@ -591,69 +583,65 @@ footer { flex-direction: column; text-align: center; }
       <button class="product-btn">Add to Order</button>
     </div>
 
-```
-<!-- HONEY -->
-<div class="product-card">
-  <svg class="product-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <path d="M28 18 L52 18 L64 40 L52 62 L28 62 L16 40 Z" fill="#c8860a" opacity="0.8"/>
-    <path d="M32 22 L48 22 L58 40 L48 58 L32 58 L22 40 Z" fill="#e8a820" opacity="0.7"/>
-    <text x="40" y="44" text-anchor="middle" font-size="9" font-family="sans-serif" fill="white" font-weight="bold">RAW</text>
-  </svg>
-  <p class="product-tag">Unfiltered · Wild-Sourced</p>
-  <h3 class="product-name">Wild Forest Honey</h3>
-  <ul class="product-benefits">
-    <li>HMF &lt;15 mg/kg — cold-extracted, never heated</li>
-    <li>Moisture content 17–18% — verified for purity</li>
-    <li>Single-origin: Uttarakhand forest forage</li>
-  </ul>
-  <p class="product-price">₹899 <sub>/ 500g</sub></p>
-  <button class="product-btn">Add to Order</button>
-</div>
+    <!-- HONEY -->
+    <div class="product-card">
+      <svg class="product-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M28 18 L52 18 L64 40 L52 62 L28 62 L16 40 Z" fill="#c8860a" opacity="0.8"/>
+        <path d="M32 22 L48 22 L58 40 L48 58 L32 58 L22 40 Z" fill="#e8a820" opacity="0.7"/>
+        <text x="40" y="44" text-anchor="middle" font-size="9" font-family="sans-serif" fill="white" font-weight="bold">RAW</text>
+      </svg>
+      <p class="product-tag">Unfiltered · Wild-Sourced</p>
+      <h3 class="product-name">Wild Forest Honey</h3>
+      <ul class="product-benefits">
+        <li>HMF &lt;15 mg/kg — cold-extracted, never heated</li>
+        <li>Moisture content 17–18% — verified for purity</li>
+        <li>Single-origin: Uttarakhand forest forage</li>
+      </ul>
+      <p class="product-price">₹899 <sub>/ 500g</sub></p>
+      <button class="product-btn">Add to Order</button>
+    </div>
 
-<!-- OIL -->
-<div class="product-card">
-  <svg class="product-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="40" cy="58" rx="18" ry="12" fill="#5a9a1a" opacity="0.6"/>
-    <rect x="32" y="24" width="16" height="36" rx="8" fill="#7ab82a" opacity="0.85"/>
-    <rect x="36" y="14" width="8" height="12" rx="3" fill="#3a3a34"/>
-    <ellipse cx="40" cy="42" rx="10" ry="5" fill="#a0d040" opacity="0.5"/>
-  </svg>
-  <p class="product-tag">Cold-Pressed · Unrefined</p>
-  <h3 class="product-name">Wood-Pressed Oil</h3>
-  <ul class="product-benefits">
-    <li>Single-seed press, zero heat — FFA &lt;1.5%</li>
-    <li>Available: Sesame · Groundnut · Coconut</li>
-    <li>Dark glass-bottled, light-protected</li>
-  </ul>
-  <p class="product-price">₹549 <sub>/ 500ml</sub></p>
-  <button class="product-btn">Add to Order</button>
-</div>
+    <!-- OIL -->
+    <div class="product-card">
+      <svg class="product-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="40" cy="58" rx="18" ry="12" fill="#5a9a1a" opacity="0.6"/>
+        <rect x="32" y="24" width="16" height="36" rx="8" fill="#7ab82a" opacity="0.85"/>
+        <rect x="36" y="14" width="8" height="12" rx="3" fill="#3a3a34"/>
+        <ellipse cx="40" cy="42" rx="10" ry="5" fill="#a0d040" opacity="0.5"/>
+      </svg>
+      <p class="product-tag">Cold-Pressed · Unrefined</p>
+      <h3 class="product-name">Wood-Pressed Oil</h3>
+      <ul class="product-benefits">
+        <li>Single-seed press, zero heat — FFA &lt;1.5%</li>
+        <li>Available: Sesame · Groundnut · Coconut</li>
+        <li>Dark glass-bottled, light-protected</li>
+      </ul>
+      <p class="product-price">₹549 <sub>/ 500ml</sub></p>
+      <button class="product-btn">Add to Order</button>
+    </div>
 
-<!-- JAGGERY -->
-<div class="product-card">
-  <svg class="product-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <rect x="16" y="32" width="48" height="32" rx="4" fill="#8b4513" opacity="0.75"/>
-    <rect x="20" y="28" width="40" height="10" rx="3" fill="#a0522d" opacity="0.85"/>
-    <rect x="24" y="20" width="32" height="12" rx="4" fill="#b8601e" opacity="0.9"/>
-    <rect x="28" y="40" width="24" height="4" rx="2" fill="white" opacity="0.15"/>
-  </svg>
-  <p class="product-tag">Single-Boil · Sulphur-Free</p>
-  <h3 class="product-name">Khandsari Jaggery</h3>
-  <ul class="product-benefits">
-    <li>Single-boil process — sucrose &lt;85%, high mineral retention</li>
-    <li>Zero sulphur, zero synthetic clarifiers</li>
-    <li>Available: Block · Powder · Liquid</li>
-  </ul>
-  <p class="product-price">₹299 <sub>/ 500g</sub></p>
-  <button class="product-btn">Add to Order</button>
-</div>
-```
-
+    <!-- JAGGERY -->
+    <div class="product-card">
+      <svg class="product-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="16" y="32" width="48" height="32" rx="4" fill="#8b4513" opacity="0.75"/>
+        <rect x="20" y="28" width="40" height="10" rx="3" fill="#a0522d" opacity="0.85"/>
+        <rect x="24" y="20" width="32" height="12" rx="4" fill="#b8601e" opacity="0.9"/>
+        <rect x="28" y="40" width="24" height="4" rx="2" fill="white" opacity="0.15"/>
+      </svg>
+      <p class="product-tag">Single-Boil · Sulphur-Free</p>
+      <h3 class="product-name">Khandsari Jaggery</h3>
+      <ul class="product-benefits">
+        <li>Single-boil process — sucrose &lt;85%, high mineral retention</li>
+        <li>Zero sulphur, zero synthetic clarifiers</li>
+        <li>Available: Block · Powder · Liquid</li>
+      </ul>
+      <p class="product-price">₹299 <sub>/ 500g</sub></p>
+      <button class="product-btn">Add to Order</button>
+    </div>
   </div>
 </section>
 
 <!-- VERIFICATION -->
-
 <section id="verification">
   <div class="verify-wrap">
     <div class="verify-left">
@@ -698,49 +686,45 @@ footer { flex-direction: column; text-align: center; }
       </div>
     </div>
 
-```
-<div class="verify-right">
-  <p class="section-label">How We Work</p>
-  <h2>Engineered<br>at Every Step.</h2>
-  <p>Each production batch is assigned a unique lot code. Parameters are recorded at sourcing, processing, and packaging stages — available on request.</p>
-  <div class="process-steps">
-    <div class="step">
-      <span class="step-num">01</span>
-      <div>
-        <div class="step-title">Source Verification</div>
-        <div class="step-desc">Breed documentation and milk-fat testing at farm level before procurement.</div>
+    <div class="verify-right">
+      <p class="section-label">How We Work</p>
+      <h2>Engineered<br>at Every Step.</h2>
+      <p>Each production batch is assigned a unique lot code. Parameters are recorded at sourcing, processing, and packaging stages — available on request.</p>
+      <div class="process-steps">
+        <div class="step">
+          <span class="step-num">01</span>
+          <div>
+            <div class="step-title">Source Verification</div>
+            <div class="step-desc">Breed documentation and milk-fat testing at farm level before procurement.</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <div>
+            <div class="step-title">48-Hour Slow Culture</div>
+            <div class="step-desc">Curd cultured at controlled temperature, bilona-churned in small batches under 20L.</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <div>
+            <div class="step-title">Low-Heat Clarification</div>
+            <div class="step-desc">Temperature never exceeds 110°C. Maillard reaction monitored for aroma consistency.</div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">04</span>
+          <div>
+            <div class="step-title">Third-Party Lab Dispatch</span>
+            <div class="step-desc">Every 5th batch sent to NABL-accredited lab. Reports filed against lot codes.</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="step">
-      <span class="step-num">02</span>
-      <div>
-        <div class="step-title">48-Hour Slow Culture</div>
-        <div class="step-desc">Curd cultured at controlled temperature, bilona-churned in small batches under 20L.</div>
-      </div>
-    </div>
-    <div class="step">
-      <span class="step-num">03</span>
-      <div>
-        <div class="step-title">Low-Heat Clarification</div>
-        <div class="step-desc">Temperature never exceeds 110°C. Maillard reaction monitored for aroma consistency.</div>
-      </div>
-    </div>
-    <div class="step">
-      <span class="step-num">04</span>
-      <div>
-        <div class="step-title">Third-Party Lab Dispatch</span>
-        <div class="step-desc">Every 5th batch sent to NABL-accredited lab. Reports filed against lot codes.</div>
-      </div>
-    </div>
-  </div>
-</div>
-```
-
   </div>
 </section>
 
 <!-- COMPARE -->
-
 <section id="compare" style="background:#f0ece3">
   <div class="compare-wrap">
     <div class="compare-header">
@@ -748,86 +732,82 @@ footer { flex-direction: column; text-align: center; }
       <h2>Choose with Data,<br>Not Instinct.</h2>
     </div>
 
-```
-<table class="compare-table">
-  <thead>
-    <tr>
-      <th>Parameter</th>
-      <th>Standard A2</th>
-      <th class="col-highlight">Badri Mountain</th>
-      <th>Market Average</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><div class="row-label">Breed Source</div><div class="row-sub">Documented lineage</div></td>
-      <td>Sahiwal / Gir</td>
-      <td class="col-highlight">Badri Hill Cow</td>
-      <td><span class="dash">Unverified</span></td>
-    </tr>
-    <tr>
-      <td><div class="row-label">Altitude of Pasture</div><div class="row-sub">Elevation (meters)</div></td>
-      <td>300–600m</td>
-      <td class="col-highlight">1,800–2,400m</td>
-      <td><span class="dash">N/A</span></td>
-    </tr>
-    <tr>
-      <td><div class="row-label">Butyric Acid</div><div class="row-sub">Lab verified</div></td>
-      <td>3.5–3.8%</td>
-      <td class="col-highlight">4.1–4.4%</td>
-      <td>2.0–2.5%</td>
-    </tr>
-    <tr>
-      <td><div class="row-label">Smoke Point</div><div class="row-sub">°C measured</div></td>
-      <td>248–252°C</td>
-      <td class="col-highlight">252–258°C</td>
-      <td>~220°C</td>
-    </tr>
-    <tr>
-      <td><div class="row-label">Batch Size</div><div class="row-sub">Litres per production</div></td>
-      <td>&lt;20L</td>
-      <td class="col-highlight">&lt;10L</td>
-      <td>500L+</td>
-    </tr>
-    <tr>
-      <td><div class="row-label">Lab Report Available</div></td>
-      <td><span class="tick">✓</span></td>
-      <td class="col-highlight"><span class="tick">✓</span></td>
-      <td><span class="cross">✗</span></td>
-    </tr>
-    <tr>
-      <td><div class="row-label">Price</div></td>
-      <td>₹1,499 / 500ml</td>
-      <td class="col-highlight">₹2,199 / 250ml</td>
-      <td>₹600–₹1,200</td>
-    </tr>
-  </tbody>
-</table>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Standard A2</th>
+          <th class="col-highlight">Badri Mountain</th>
+          <th>Market Average</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="row-label">Breed Source</div><div class="row-sub">Documented lineage</div></td>
+          <td>Sahiwal / Gir</td>
+          <td class="col-highlight">Badri Hill Cow</td>
+          <td><span class="dash">Unverified</span></td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Altitude of Pasture</div><div class="row-sub">Elevation (meters)</div></td>
+          <td>300–600m</td>
+          <td class="col-highlight">1,800–2,400m</td>
+          <td><span class="dash">N/A</span></td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Butyric Acid</div><div class="row-sub">Lab verified</div></td>
+          <td>3.5–3.8%</td>
+          <td class="col-highlight">4.1–4.4%</td>
+          <td>2.0–2.5%</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Smoke Point</div><div class="row-sub">°C measured</div></td>
+          <td>248–252°C</td>
+          <td class="col-highlight">252–258°C</td>
+          <td>~220°C</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Batch Size</div><div class="row-sub">Litres per production</div></td>
+          <td>&lt;20L</td>
+          <td class="col-highlight">&lt;10L</td>
+          <td>500L+</td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Lab Report Available</div></td>
+          <td><span class="tick">✓</span></td>
+          <td class="col-highlight"><span class="tick">✓</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td><div class="row-label">Price</div></td>
+          <td>₹1,499 / 500ml</td>
+          <td class="col-highlight">₹2,199 / 250ml</td>
+          <td>₹600–₹1,200</td>
+        </tr>
+      </tbody>
+    </table>
 
-<div class="reviews-strip">
-  <div class="review-card">
-    <div class="review-stars">★★★★★</div>
-    <p class="review-text">"Finally a ghee brand that sends actual lab data with the order. The Badri variant is noticeably different in clarity and aroma — not marketing."</p>
-    <p class="review-author">Arjun R. · Delhi · Verified Purchase</p>
-  </div>
-  <div class="review-card">
-    <div class="review-stars">★★★★★</div>
-    <p class="review-text">"Been using for 8 months. The consistency across batches is what gets me — same smoke point, same colour, same result every time."</p>
-    <p class="review-author">Priya S. · Mumbai · Verified Purchase</p>
-  </div>
-  <div class="review-card">
-    <div class="review-stars">★★★★★</div>
-    <p class="review-text">"Switched from another premium brand. The batch traceability and the comparison table on their site did the convincing — no fluff, just facts."</p>
-    <p class="review-author">Karthik M. · Bengaluru · Verified Purchase</p>
-  </div>
-</div>
-```
-
+    <div class="reviews-strip">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Finally a ghee brand that sends actual lab data with the order. The Badri variant is noticeably different in clarity and aroma — not marketing."</p>
+        <p class="review-author">Arjun R. · Delhi · Verified Purchase</p>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Been using for 8 months. The consistency across batches is what gets me — same smoke point, same colour, same result every time."</p>
+        <p class="review-author">Priya S. · Mumbai · Verified Purchase</p>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Switched from another premium brand. The batch traceability and the comparison table on their site did the convincing — no fluff, just facts."</p>
+        <p class="review-author">Karthik M. · Bengaluru · Verified Purchase</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- CTA FOOTER -->
-
 <section id="cta-footer">
   <p class="section-label" style="color:var(--copper-light);text-align:center">Ready to Order</p>
   <h2>Precision in Every Jar.</h2>
@@ -865,6 +845,5 @@ footer { flex-direction: column; text-align: center; }
     observer.observe(el);
   });
 </script>
-
 </body>
 </html>
