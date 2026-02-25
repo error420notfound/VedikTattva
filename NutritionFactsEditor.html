@@ -14,76 +14,67 @@
   :root { --label-font: 'Frank Ruhl Libre', serif; }
   body { background: #1a1a2e; font-family: 'Segoe UI', sans-serif; }
 
-  /* ── Label Styles — all px for consistent export ── */
+  /* ── Label Styles ── */
   #label {
     font-family: var(--label-font);
     background: #fff;
     color: #000;
     width: 340px;
-    padding: 5px 7px 6px;
+    padding: 6px 8px;
     border: 2px solid #000;
     box-sizing: border-box;
     user-select: none;
-    font-size: 13px;
-    line-height: 1.15;
   }
-  #label * { box-sizing: border-box; }
-  #label .title { font-size: 32px; font-weight: 900; line-height: 1; margin: 0 0 1px 0; }
-  #label .serving-line { font-size: 10px; margin: 1px 0 0 0; line-height: 1.2; }
-  #label .serving-bold { font-size: 11px; font-weight: 700; display: flex; justify-content: space-between; align-items: baseline; margin: 1px 0 0 0; }
-  #label .thick-bar { height: 8px; background: #000; margin: 3px 0; }
-  #label .medium-bar { height: 4px; background: #000; margin: 2px 0; }
-  #label .amt-label { font-size: 9px; line-height: 1.2; margin: 0; }
-  #label .calories-row { display: flex; justify-content: space-between; align-items: baseline; margin: 0; }
-  #label .cal-label { font-size: 21px; font-weight: 700; line-height: 1; }
-  #label .cal-value { font-size: 38px; font-weight: 900; line-height: 0.95; }
-  #label .dv-header { text-align: right; font-size: 9px; margin: 2px 0 1px 0; line-height: 1; }
-  #label .nutrient-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; padding: 1px 0; border-top: 1px solid #000; line-height: 1.2; margin: 0; }
-  #label .indent1 { padding-left: 14px; }
-  #label .indent2 { padding-left: 28px; }
+  #label .title { font-size: 2rem; font-weight: 900; line-height: 1; }
+  #label .serving-line { font-size: 0.78rem; margin-top: 2px; }
+  #label .serving-bold { font-size: 0.85rem; font-weight: 700; display: flex; justify-content: space-between; }
+  #label .thick-bar { height: 8px; background: #000; margin: 4px 0; }
+  #label .medium-bar { height: 4px; background: #000; margin: 3px 0; }
+  #label .thin-bar { height: 1px; background: #000; margin: 2px 0; }
+  #label .amt-label { font-size: 0.68rem; }
+  #label .calories-row { display: flex; justify-content: space-between; align-items: baseline; }
+  #label .cal-label { font-size: 1.3rem; font-weight: 700; }
+  #label .cal-value { font-size: 2.4rem; font-weight: 900; }
+  #label .dv-header { text-align: right; font-size: 0.65rem; margin-bottom: 2px; }
+  #label .nutrient-row { display: flex; justify-content: space-between; font-size: 0.78rem; padding: 1px 0; border-top: 1px solid #000; }
+  #label .nutrient-row:first-child { border-top: none; }
+  #label .indent1 { padding-left: 12px; }
+  #label .indent2 { padding-left: 24px; }
   #label .bold { font-weight: 700; }
-  #label .micro-section { font-size: 10px; }
-  #label .micro-row { display: flex; justify-content: space-between; align-items: baseline; padding: 1px 0; border-top: 1px solid #000; line-height: 1.2; margin: 0; }
-  #label .footnote { font-size: 8px; margin-top: 3px; border-top: 1px solid #000; padding-top: 3px; line-height: 1.35; }
+  #label .micro-section { font-size: 0.72rem; }
+  #label .micro-row { display: flex; justify-content: space-between; padding: 2px 0; border-top: 1px solid #000; }
+  #label .footnote { font-size: 0.58rem; margin-top: 4px; border-top: 1px solid #000; padding-top: 3px; line-height: 1.3; }
 
   /* Editable spans */
   .editable {
     outline: none;
     cursor: text;
-    display: inline;        /* inline avoids block-level spacing artifacts */
+    min-width: 4px;
+    display: inline-block;
   }
-  /* Edit indicators ONLY shown on screen, never bleed into export */
   #label.edit-mode .editable {
-    border-bottom: 1.5px dashed rgba(37,99,235,0.7);
-    padding-bottom: 1px;
+    border-bottom: 1px dashed #2563eb;
+    background: rgba(37,99,235,0.04);
   }
   #label.edit-mode .editable:focus {
     border-bottom: 2px solid #2563eb;
-    background: rgba(37,99,235,0.08);
-    border-radius: 1px;
-    padding-bottom: 1px;
+    background: rgba(37,99,235,0.1);
+    border-radius: 2px;
   }
 
   /* ── Panel Styles ── */
   .panel { background: #16213e; border: 1px solid #0f3460; border-radius: 12px; }
   .panel-title { color: #e94560; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
   .ctrl-btn {
-    background: #0f3460;
-    color: #e2e8f0;
-    border: 1px solid #1e4d8c;
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 0.78rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; gap: 6px;
+    background: #0f3460; color: #e2e8f0; border: 1px solid #1e4d8c;
+    border-radius: 8px; padding: 8px 14px; font-size: 0.78rem; cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
   }
   .ctrl-btn:hover { background: #1e4d8c; border-color: #e94560; color: #fff; }
   .ctrl-btn.active { background: #e94560; border-color: #e94560; color: #fff; }
   select, input[type=range] { background: #0f3460; color: #e2e8f0; border: 1px solid #1e4d8c; border-radius: 6px; padding: 4px 8px; font-size: 0.78rem; width: 100%; }
   label { color: #94a3b8; font-size: 0.72rem; }
 
-  /* Export buttons */
   .export-btn {
     display: flex; align-items: center; gap: 8px; justify-content: center;
     padding: 10px 20px; border-radius: 8px; font-size: 0.82rem; font-weight: 600;
@@ -102,15 +93,12 @@
     transition: all 0.3s; pointer-events: none; z-index: 999;
   }
   .toast.show { opacity: 1; transform: translateY(0); }
-
-  /* Label width slider feedback */
   #label-wrap { display: flex; justify-content: center; }
 </style>
 </head>
 <body class="min-h-screen p-6">
 
 <div class="max-w-6xl mx-auto">
-  <!-- Header -->
   <div class="text-center mb-8">
     <h1 class="text-3xl font-black text-white tracking-tight">Nutrition <span style="color:#e94560">Facts</span> Editor</h1>
     <p class="text-slate-400 text-sm mt-1">Click any field on the label to edit it in real-time</p>
@@ -118,10 +106,9 @@
 
   <div class="flex flex-col lg:flex-row gap-6 items-start">
 
-    <!-- ── LEFT PANEL: Controls ── -->
+    <!-- LEFT PANEL -->
     <div class="w-full lg:w-64 flex-shrink-0 space-y-4">
 
-      <!-- Edit Toggle -->
       <div class="panel p-4">
         <div class="panel-title">Mode</div>
         <button id="editToggleBtn" class="ctrl-btn active w-full justify-center" onclick="toggleEdit()">
@@ -130,7 +117,6 @@
         </button>
       </div>
 
-      <!-- Font Style -->
       <div class="panel p-4">
         <div class="panel-title">Font Style</div>
         <label class="block mb-1">Google Font</label>
@@ -186,21 +172,18 @@
         </select>
       </div>
 
-      <!-- Label Size -->
       <div class="panel p-4">
         <div class="panel-title">Label Size</div>
         <label class="block mb-1">Width: <span id="widthVal">340</span>px</label>
         <input type="range" min="260" max="520" value="340" oninput="resizeLabel(this.value)">
       </div>
 
-      <!-- Border -->
       <div class="panel p-4">
         <div class="panel-title">Border</div>
         <label class="block mb-1">Thickness: <span id="borderVal">2</span>px</label>
         <input type="range" min="0" max="6" value="2" oninput="updateBorder(this.value)">
       </div>
 
-      <!-- Export -->
       <div class="panel p-4">
         <div class="panel-title">Export</div>
         <div class="space-y-3">
@@ -215,7 +198,6 @@
         </div>
       </div>
 
-      <!-- Reset -->
       <div class="panel p-4">
         <button class="ctrl-btn w-full justify-center" onclick="resetLabel()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
@@ -224,14 +206,12 @@
       </div>
     </div>
 
-    <!-- ── CENTER: Label Preview ── -->
+    <!-- CENTER: Label -->
     <div class="flex-1 flex justify-center">
       <div id="label-wrap">
         <div id="label" class="edit-mode">
-          <!-- Title -->
-          <div class="title" id="lbl-title"><span class="editable" contenteditable="true" spellcheck="false">Nutrition Facts</span></div>
 
-          <!-- Servings -->
+          <div class="title"><span class="editable" contenteditable="true" spellcheck="false">Nutrition Facts</span></div>
           <div class="serving-line"><span class="editable" contenteditable="true" spellcheck="false">8</span> servings per container</div>
           <div class="serving-bold">
             <span>Serving size</span>
@@ -240,7 +220,6 @@
 
           <div class="thick-bar"></div>
 
-          <!-- Calories -->
           <div class="amt-label">Amount per serving</div>
           <div class="calories-row">
             <span class="cal-label">Calories</span>
@@ -250,7 +229,6 @@
           <div class="medium-bar"></div>
           <div class="dv-header">% Daily Value*</div>
 
-          <!-- Nutrients -->
           <div class="nutrient-row bold" style="border-top:3px solid #000">
             <span><span class="bold">Total Fat</span> <span class="editable" contenteditable="true" spellcheck="false">8g</span></span>
             <span class="bold editable" contenteditable="true" spellcheck="false">10%</span>
@@ -294,7 +272,6 @@
 
           <div class="thick-bar"></div>
 
-          <!-- Micronutrients -->
           <div class="micro-section">
             <div class="micro-row">
               <span>Vitamin D <span class="editable" contenteditable="true" spellcheck="false">2mcg</span></span>
@@ -314,15 +291,15 @@
             </div>
           </div>
 
-          <!-- Footnote -->
           <div class="footnote">
             <span class="editable" contenteditable="true" spellcheck="false">* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.</span>
           </div>
+
         </div>
       </div>
     </div>
 
-    <!-- ── RIGHT PANEL: Field Quick Edit ── -->
+    <!-- RIGHT PANEL -->
     <div class="w-full lg:w-56 flex-shrink-0 space-y-4">
       <div class="panel p-4">
         <div class="panel-title">Quick Tips</div>
@@ -331,7 +308,7 @@
           <li>💡 Use Tab to move between fields</li>
           <li>💡 Change font via the Font Style panel</li>
           <li>💡 Adjust label width with the slider</li>
-          <li>💡 Disable Edit Mode before exporting for a clean look</li>
+          <li>💡 Turn off Edit Mode before exporting for a clean result</li>
           <li>💡 PDF preserves exact label dimensions</li>
         </ul>
       </div>
@@ -352,15 +329,14 @@
 
       <div class="panel p-4">
         <div class="panel-title">Font Size</div>
-        <label class="block mb-1">Base size: <span id="fsVal">13</span>px</label>
-        <input type="range" min="8" max="20" value="13" oninput="updateFontSize(this.value)">
+        <label class="block mb-1">Base size: <span id="fsVal">16</span>px</label>
+        <input type="range" min="10" max="22" value="16" oninput="updateFontSize(this.value)">
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
@@ -372,7 +348,6 @@
     const btn = document.getElementById('editToggleBtn');
     if (editMode) {
       label.classList.add('edit-mode');
-      btn.textContent = '';
       btn.innerHTML = `<svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-8 8a2 2 0 01-.878.515l-3 .75a.5.5 0 01-.607-.607l.75-3a2 2 0 01.515-.878l8-8z"/></svg> Edit Mode: ON`;
       btn.classList.add('active');
       document.querySelectorAll('.editable').forEach(e => e.setAttribute('contenteditable','true'));
@@ -384,9 +359,7 @@
     }
   }
 
-  // Font change
   const fontFamilyMap = {
-    // Serif
     'Frank+Ruhl+Libre:wght@400;700;900': 'Frank Ruhl Libre',
     'Playfair+Display:wght@400;700;900': 'Playfair Display',
     'Merriweather:wght@400;700;900': 'Merriweather',
@@ -397,7 +370,6 @@
     'Lora:wght@400;700': 'Lora',
     'EB+Garamond:wght@400;700;800': 'EB Garamond',
     'Cormorant+Garamond:wght@400;700': 'Cormorant Garamond',
-    // Sans-Serif
     'Inter:wght@400;700;900': 'Inter',
     'DM+Sans:wght@400;700;900': 'DM Sans',
     'Manrope:wght@400;700;800': 'Manrope',
@@ -417,7 +389,6 @@
     'Sora:wght@400;700;800': 'Sora',
     'Jost:wght@400;700;900': 'Jost',
     'Space+Grotesk:wght@400;700': 'Space Grotesk',
-    // Condensed / Display
     'Oswald:wght@400;700': 'Oswald',
     'Roboto+Condensed:wght@400;700': 'Roboto Condensed',
     'Bebas+Neue': 'Bebas Neue',
@@ -425,7 +396,6 @@
     'Fjalla+One': 'Fjalla One',
     'Big+Shoulders+Display:wght@400;700;900': 'Big Shoulders Display',
     'Antonio:wght@400;700': 'Antonio',
-    // Monospace
     'JetBrains+Mono:wght@400;700': 'JetBrains Mono',
     'Space+Mono:wght@400;700': 'Space Mono',
     'IBM+Plex+Mono:wght@400;700': 'IBM Plex Mono',
@@ -454,7 +424,6 @@
   function updateBars(color) {
     document.querySelectorAll('#label .thick-bar, #label .medium-bar').forEach(b => b.style.background = color);
     label.style.borderColor = color;
-    label.style.color = document.getElementById('textColor').value;
     document.querySelectorAll('#label .nutrient-row, #label .micro-row').forEach(r => r.style.borderTopColor = color);
   }
 
@@ -463,100 +432,41 @@
     label.style.fontSize = val + 'px';
   }
 
-  // ── Clean clone capture — never touches the original label ──
-  async function captureLabel(scale) {
-    await document.fonts.ready;
-
-    // 1. Deep-clone the label
-    const clone = label.cloneNode(true);
-
-    // 2. Strip ALL edit-mode visual artifacts from the clone
-    clone.classList.remove('edit-mode');
-    clone.removeAttribute('contenteditable');
-
-    // 3. Nuke every editable span's styling and contenteditable
-    clone.querySelectorAll('.editable').forEach(el => {
-      el.removeAttribute('contenteditable');
-      el.style.border        = 'none';
-      el.style.borderBottom  = 'none';
-      el.style.outline       = 'none';
-      el.style.background    = 'transparent';
-      el.style.boxShadow     = 'none';
-      el.style.display       = 'inline';   // collapse min-width artifact
-    });
-
-    // 4. Copy all computed inline styles from original label
-    //    so custom colours / widths / fonts are preserved
-    const computed = window.getComputedStyle(label);
-    clone.style.fontFamily   = computed.fontFamily;
-    clone.style.fontSize     = computed.fontSize;
-    clone.style.color        = label.style.color        || '#000000';
-    clone.style.background   = label.style.background   || '#ffffff';
-    clone.style.borderColor  = label.style.borderColor  || '#000000';
-    clone.style.borderWidth  = label.style.borderWidth  || '2px';
-    clone.style.width        = label.offsetWidth + 'px';
-
-    // 5. Position off-screen so it lays out but isn't visible
-    clone.style.position     = 'fixed';
-    clone.style.top          = '-9999px';
-    clone.style.left         = '-9999px';
-    clone.style.zIndex       = '-1';
-    clone.style.pointerEvents = 'none';
-    document.body.appendChild(clone);
-
-    // 6. Let the browser lay out the clone
-    await new Promise(r => setTimeout(r, 300));
-
-    const lw = clone.offsetWidth;
-    const lh = clone.offsetHeight;
-
-    // 7. Capture the clean clone
-    const canvas = await html2canvas(clone, {
-      scale,
-      backgroundColor: label.style.backgroundColor || '#ffffff',
-      useCORS: true,
-      allowTaint: false,
-      logging: false,
-      width:  lw,
-      height: lh,
-      scrollX: 0,
-      scrollY: 0,
-      removeContainer: false,
-    });
-
-    // 8. Remove clone
-    document.body.removeChild(clone);
-    return { canvas, lw, lh };
-  }
-
   // ── Export PDF ──
   async function exportPDF() {
+    const wasEdit = editMode;
+    if (editMode) toggleEdit();
     showToast('Generating PDF…');
+    await new Promise(r => setTimeout(r, 300));
     try {
-      const { canvas, lw, lh } = await captureLabel(3);
+      const canvas = await html2canvas(label, { scale: 3, backgroundColor: label.style.background || '#fff', useCORS: true });
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
-      const mmW = lw * 0.2645;
-      const mmH = lh * 0.2645;
-      const margin = 4;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [mmW + margin*2, mmH + margin*2] });
-      pdf.addImage(imgData, 'PNG', margin, margin, mmW, mmH, undefined, 'NONE');
+      const w = label.offsetWidth * 0.2645;
+      const h = label.offsetHeight * 0.2645;
+      const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit: 'mm', format: [w + 10, h + 10] });
+      pdf.addImage(imgData, 'PNG', 5, 5, w, h);
       pdf.save('nutrition-label.pdf');
       showToast('PDF downloaded!');
-    } catch(e) { showToast('Error: ' + e.message); console.error(e); }
+    } catch(e) { showToast('Error generating PDF'); console.error(e); }
+    if (wasEdit) toggleEdit();
   }
 
   // ── Export PNG ──
   async function exportPNG() {
+    const wasEdit = editMode;
+    if (editMode) toggleEdit();
     showToast('Generating PNG…');
+    await new Promise(r => setTimeout(r, 300));
     try {
-      const { canvas } = await captureLabel(4);
+      const canvas = await html2canvas(label, { scale: 4, backgroundColor: label.style.background || '#fff', useCORS: true });
       const link = document.createElement('a');
       link.download = 'nutrition-label.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
       showToast('PNG downloaded!');
-    } catch(e) { showToast('Error: ' + e.message); console.error(e); }
+    } catch(e) { showToast('Error generating PNG'); console.error(e); }
+    if (wasEdit) toggleEdit();
   }
 
   // ── Reset ──
@@ -568,11 +478,11 @@
     label.style.width = '340px';
     document.getElementById('widthVal').textContent = '340';
     document.getElementById('borderVal').textContent = '2';
-    document.getElementById('fsVal').textContent = '13';
-    label.classList.add('edit-mode');
+    document.getElementById('fsVal').textContent = '16';
     document.getElementById('bgColor').value = '#ffffff';
     document.getElementById('textColor').value = '#000000';
     document.getElementById('barColor').value = '#000000';
+    if (!editMode) toggleEdit();
     showToast('Label reset to defaults!');
   }
 
