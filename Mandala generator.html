@@ -30,53 +30,106 @@ tailwind.config = {
 }
 </script>
 <style>
-  * { box-sizing: border-box; }
-  body { background: #0a0a0a; color: #cccccc; font-family: 'IBM Plex Mono', monospace; overflow: hidden; height: 100vh; }
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: #111; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: #555; }
+  /* ── THEME VARIABLES ── */
+  :root {
+    --bg:       #0a0a0a;
+    --bg2:      #0d0d0d;
+    --panel:    #111111;
+    --border:   #222222;
+    --border2:  #1a1a1a;
+    --border3:  #1e1e1e;
+    --text:     #cccccc;
+    --text2:    #aaaaaa;
+    --dim:      #666666;
+    --dim2:     #555555;
+    --dim3:     #444444;
+    --dim4:     #333333;
+    --accent:   #e8ff3c;
+    --accent-bg: rgba(232,255,60,0.05);
+    --accent-bg2: rgba(232,255,60,0.06);
+    --scroll-thumb: #333;
+    --scroll-hover: #555;
+    --range-bg:  #222;
+    --thumb-hover: #ffffff;
+    --tooltip-bg: #1a1a1a;
+    --canvas-bg: #0a0a0a;
+  }
+  body.light {
+    --bg:       #f0f0ee;
+    --bg2:      #e8e8e6;
+    --panel:    #f8f8f6;
+    --border:   #d0d0cc;
+    --border2:  #dcdcd8;
+    --border3:  #e0e0dc;
+    --text:     #1a1a1a;
+    --text2:    #444444;
+    --dim:      #888888;
+    --dim2:     #777777;
+    --dim3:     #999999;
+    --dim4:     #bbbbbb;
+    --accent:   #2d6a00;
+    --accent-bg: rgba(45,106,0,0.06);
+    --accent-bg2: rgba(45,106,0,0.08);
+    --scroll-thumb: #bbb;
+    --scroll-hover: #999;
+    --range-bg:  #ccc;
+    --thumb-hover: #000000;
+    --tooltip-bg: #fff;
+    --canvas-bg: #e8e8e6;
+  }
 
-  .panel-section { border-bottom: 1px solid #1e1e1e; }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'IBM Plex Mono', monospace; overflow: hidden; height: 100vh;
+    transition: background 0.2s, color 0.2s;
+  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--panel); }
+  ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
+
+  .panel-section { border-bottom: 1px solid var(--border3); }
   .panel-section:last-child { border-bottom: none; }
 
   .section-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 8px 12px; cursor: pointer; user-select: none;
     font-size: 9px; font-weight: 600; letter-spacing: 0.15em;
-    text-transform: uppercase; color: #666; transition: color 0.15s;
+    text-transform: uppercase; color: var(--dim); transition: color 0.15s;
   }
-  .section-header:hover { color: #ccc; }
-  .section-header.active { color: #e8ff3c; }
+  .section-header:hover { color: var(--text); }
+  .section-header.active { color: var(--accent); }
   .section-content { padding: 10px 12px; display: none; }
   .section-content.open { display: block; }
 
   .param-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
-  .param-label { font-size: 9px; color: #555; letter-spacing: 0.08em; text-transform: uppercase; flex: 0 0 auto; min-width: 80px; }
-  .param-value { font-size: 10px; color: #e8ff3c; font-weight: 500; min-width: 36px; text-align: right; }
+  .param-label { font-size: 9px; color: var(--dim2); letter-spacing: 0.08em; text-transform: uppercase; flex: 0 0 auto; min-width: 80px; }
+  .param-value { font-size: 10px; color: var(--accent); font-weight: 500; min-width: 36px; text-align: right; }
 
   input[type=range] {
     -webkit-appearance: none; appearance: none;
-    width: 100%; height: 2px; background: #222; outline: none;
+    width: 100%; height: 2px; background: var(--range-bg); outline: none;
     border-radius: 0; cursor: pointer; flex: 1;
   }
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none;
-    width: 10px; height: 10px; background: #e8ff3c;
+    width: 10px; height: 10px; background: var(--accent);
     border-radius: 0; cursor: pointer; border: none;
   }
-  input[type=range]::-webkit-slider-thumb:hover { background: #fff; }
+  input[type=range]::-webkit-slider-thumb:hover { background: var(--thumb-hover); }
 
   input[type=number], input[type=text] {
-    background: #0d0d0d; border: 1px solid #222; color: #ccc;
+    background: var(--bg2); border: 1px solid var(--border); color: var(--text2);
     font-family: 'IBM Plex Mono', monospace; font-size: 10px;
     padding: 3px 6px; outline: none; width: 60px; text-align: right;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
   }
-  input[type=number]:focus, input[type=text]:focus { border-color: #444; color: #fff; }
+  input[type=number]:focus, input[type=text]:focus { border-color: var(--dim); color: var(--text); }
 
   input[type=color] {
     -webkit-appearance: none; appearance: none;
-    width: 24px; height: 18px; border: 1px solid #333; cursor: pointer;
+    width: 24px; height: 18px; border: 1px solid var(--dim4); cursor: pointer;
     padding: 0; background: none;
   }
   input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
@@ -84,133 +137,151 @@ tailwind.config = {
 
   .toggle-btn {
     display: flex; align-items: center; justify-content: center;
-    width: 28px; height: 18px; border: 1px solid #333; cursor: pointer;
-    font-size: 8px; letter-spacing: 0.05em; color: #555; transition: all 0.15s;
-    user-select: none;
+    width: 28px; height: 18px; border: 1px solid var(--dim4); cursor: pointer;
+    font-size: 8px; letter-spacing: 0.05em; color: var(--dim2); transition: all 0.15s;
+    user-select: none; background: transparent;
   }
-  .toggle-btn.on { border-color: #e8ff3c; color: #e8ff3c; background: rgba(232,255,60,0.05); }
+  .toggle-btn.on { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
 
   .seg-control { display: flex; gap: 0; }
   .seg-btn {
     flex: 1; padding: 3px 0; font-size: 8px; letter-spacing: 0.1em;
     text-transform: uppercase; text-align: center; cursor: pointer;
-    border: 1px solid #222; color: #444; transition: all 0.15s; user-select: none;
+    border: 1px solid var(--border); color: var(--dim3); transition: all 0.15s; user-select: none;
+    background: transparent;
   }
   .seg-btn:not(:first-child) { border-left: none; }
-  .seg-btn:hover { color: #888; border-color: #333; }
-  .seg-btn.active { color: #e8ff3c; border-color: #e8ff3c; background: rgba(232,255,60,0.06); }
+  .seg-btn:hover { color: var(--dim); border-color: var(--dim4); }
+  .seg-btn.active { color: var(--accent); border-color: var(--accent); background: var(--accent-bg2); }
 
   .action-btn {
     font-family: 'IBM Plex Mono', monospace; font-size: 9px;
     letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 6px 10px; border: 1px solid #333; background: transparent;
-    color: #666; cursor: pointer; transition: all 0.15s; width: 100%;
+    padding: 6px 10px; border: 1px solid var(--dim4); background: transparent;
+    color: var(--dim); cursor: pointer; transition: all 0.15s; width: 100%;
     margin-bottom: 4px;
   }
-  .action-btn:hover { border-color: #666; color: #ccc; }
-  .action-btn.primary { border-color: #e8ff3c; color: #e8ff3c; }
-  .action-btn.primary:hover { background: #e8ff3c; color: #000; }
+  .action-btn:hover { border-color: var(--dim); color: var(--text); }
+  .action-btn.primary { border-color: var(--accent); color: var(--accent); }
+  .action-btn.primary:hover { background: var(--accent); color: var(--bg); }
 
   .layer-chip {
     display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 7px; border: 1px solid #222; font-size: 9px;
-    cursor: pointer; transition: all 0.15s; user-select: none;
+    padding: 3px 7px; border: 1px solid var(--border); font-size: 9px;
+    cursor: pointer; transition: all 0.15s; user-select: none; color: var(--dim2);
   }
-  .layer-chip.active { border-color: #e8ff3c; color: #e8ff3c; }
-  .layer-chip .vis-dot { width: 5px; height: 5px; background: #444; border-radius: 50%; }
-  .layer-chip.active .vis-dot { background: #e8ff3c; }
+  .layer-chip.active { border-color: var(--accent); color: var(--accent); }
+  .layer-chip .vis-dot { width: 5px; height: 5px; background: var(--dim3); border-radius: 50%; }
+  .layer-chip.active .vis-dot { background: var(--accent); }
 
   .canvas-wrap {
     display: flex; align-items: center; justify-content: center;
-    flex: 1; background: #0a0a0a; position: relative; overflow: hidden;
+    flex: 1; background: var(--canvas-bg); position: relative; overflow: hidden;
+    transition: background 0.2s;
   }
 
   canvas { max-width: 100%; max-height: 100%; }
 
   .status-bar {
     display: flex; align-items: center; gap: 16px;
-    padding: 5px 14px; border-top: 1px solid #1a1a1a;
-    font-size: 9px; color: #444; letter-spacing: 0.08em;
+    padding: 5px 14px; border-top: 1px solid var(--border2);
+    font-size: 9px; color: var(--dim3); letter-spacing: 0.08em;
+    background: var(--panel); transition: background 0.2s;
   }
-  .status-dot { width: 4px; height: 4px; border-radius: 50%; background: #e8ff3c; display: inline-block; }
+  .status-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); display: inline-block; }
 
   select {
-    background: #0d0d0d; border: 1px solid #222; color: #aaa;
+    background: var(--bg2); border: 1px solid var(--border); color: var(--text2);
     font-family: 'IBM Plex Mono', monospace; font-size: 9px;
     padding: 3px 6px; outline: none; cursor: pointer; flex: 1;
   }
-  select:focus { border-color: #444; }
-  option { background: #111; }
+  select:focus { border-color: var(--dim3); }
+  option { background: var(--panel); }
 
   .grid-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
 
   #undo-btn, #redo-btn {
-    width: 28px; height: 22px; border: 1px solid #222; background: transparent;
-    color: #444; cursor: pointer; font-size: 11px; display: flex;
+    width: 28px; height: 22px; border: 1px solid var(--border); background: transparent;
+    color: var(--dim3); cursor: pointer; font-size: 11px; display: flex;
     align-items: center; justify-content: center; transition: all 0.15s;
     font-family: monospace;
   }
-  #undo-btn:hover, #redo-btn:hover { border-color: #555; color: #aaa; }
+  #undo-btn:hover, #redo-btn:hover { border-color: var(--dim); color: var(--text2); }
 
   .top-bar-btn {
     font-family: 'IBM Plex Mono', monospace; font-size: 8px;
     letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 4px 10px; border: 1px solid #222; background: transparent;
-    color: #555; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    padding: 4px 10px; border: 1px solid var(--border); background: transparent;
+    color: var(--dim2); cursor: pointer; transition: all 0.15s; white-space: nowrap;
   }
-  .top-bar-btn:hover { border-color: #555; color: #aaa; }
-  .top-bar-btn.active { border-color: #e8ff3c; color: #e8ff3c; }
+  .top-bar-btn:hover { border-color: var(--dim); color: var(--text2); }
+  .top-bar-btn.active { border-color: var(--accent); color: var(--accent); }
 
   .preset-chip {
-    padding: 4px 10px; border: 1px solid #222; font-size: 9px;
+    padding: 4px 10px; border: 1px solid var(--border); font-size: 9px;
     cursor: pointer; transition: all 0.15s; text-align: center;
-    letter-spacing: 0.08em; color: #555;
+    letter-spacing: 0.08em; color: var(--dim2);
   }
-  .preset-chip:hover { border-color: #555; color: #aaa; }
-  .preset-chip.active { border-color: #e8ff3c; color: #e8ff3c; }
+  .preset-chip:hover { border-color: var(--dim); color: var(--text2); }
+  .preset-chip.active { border-color: var(--accent); color: var(--accent); }
 
   .tooltip { position: relative; }
   textarea {
-    background: #060606; border: 1px solid #222; color: #aaa;
+    background: var(--bg2); border: 1px solid var(--border); color: var(--text2);
     font-family: 'IBM Plex Mono', monospace; font-size: 8px;
     padding: 6px; resize: vertical; outline: none; line-height: 1.5;
-    width: 100%;
+    width: 100%; transition: background 0.2s, border-color 0.2s;
   }
-  textarea:focus { border-color: #444; color: #ccc; }
+  textarea:focus { border-color: var(--dim3); color: var(--text); }
   .tooltip:hover::after {
     content: attr(data-tip);
     position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-    background: #1a1a1a; border: 1px solid #333; padding: 3px 7px;
-    font-size: 8px; color: #aaa; white-space: nowrap; z-index: 100;
+    background: var(--tooltip-bg); border: 1px solid var(--border); padding: 3px 7px;
+    font-size: 8px; color: var(--text2); white-space: nowrap; z-index: 100;
     letter-spacing: 0.08em;
   }
+
+  /* Left panel and top bar use panel color */
+  #left-panel { background: var(--panel); transition: background 0.2s; }
+  #top-bar { background: var(--panel); border-bottom: 1px solid var(--border2); transition: background 0.2s; }
+
+  /* Theme toggle button special style */
+  #btn-theme {
+    font-size: 13px; padding: 2px 8px;
+    border: 1px solid var(--border); background: transparent;
+    cursor: pointer; transition: all 0.2s; color: var(--dim2);
+    line-height: 1;
+  }
+  #btn-theme:hover { border-color: var(--dim); color: var(--text); }
 </style>
 </head>
 <body>
 
 <!-- TOP BAR -->
-<div style="height:38px; border-bottom:1px solid #1a1a1a; display:flex; align-items:center; padding:0 14px; gap:10px; background:#0d0d0d; flex-shrink:0;">
-  <span style="font-size:11px; font-weight:600; letter-spacing:0.2em; color:#e8ff3c; margin-right:8px;">MANDALA</span>
-  <span style="font-size:8px; color:#333; margin-right:4px;">PARAMETRIC GENERATOR v1.0</span>
+<div id="top-bar" style="height:38px; display:flex; align-items:center; padding:0 14px; gap:10px; flex-shrink:0;">
+  <span style="font-size:11px; font-weight:600; letter-spacing:0.2em; color:var(--accent); margin-right:8px;">MANDALA</span>
+  <span style="font-size:8px; color:var(--dim4); margin-right:4px;">PARAMETRIC GENERATOR v1.0</span>
   <div style="flex:1;"></div>
   <button id="undo-btn" class="tooltip" data-tip="Undo (Ctrl+Z)">↩</button>
   <button id="redo-btn" class="tooltip" data-tip="Redo (Ctrl+Y)">↪</button>
-  <div style="width:1px; height:18px; background:#1e1e1e; margin:0 4px;"></div>
+  <div style="width:1px; height:18px; background:var(--border3); margin:0 4px;"></div>
   <button class="top-bar-btn" id="btn-grid" onclick="toggleGrid()">GRID</button>
   <button class="top-bar-btn" id="btn-angles" onclick="toggleAngles()">ANGLES</button>
   <button class="top-bar-btn" id="btn-print-sim" onclick="togglePrintSim()">PRINT SIM</button>
-  <div style="width:1px; height:18px; background:#1e1e1e; margin:0 4px;"></div>
+  <div style="width:1px; height:18px; background:var(--border3); margin:0 4px;"></div>
   <button class="top-bar-btn" onclick="exportSVG()">SVG</button>
   <button class="top-bar-btn" onclick="exportPNG()">PNG</button>
   <button class="top-bar-btn" onclick="exportJSON()">JSON</button>
   <button class="top-bar-btn" onclick="importJSON()">IMPORT</button>
+  <div style="width:1px; height:18px; background:var(--border3); margin:0 4px;"></div>
+  <button id="btn-theme" onclick="toggleTheme()" title="Toggle light/dark mode">☀︎</button>
   <input type="file" id="json-import" accept=".json" style="display:none" onchange="handleJSONImport(event)">
 </div>
 
 <div style="display:flex; height:calc(100vh - 38px);">
 
 <!-- LEFT PANEL -->
-<div style="width:240px; flex-shrink:0; border-right:1px solid #1a1a1a; overflow-y:auto; background:#0d0d0d;">
+<div id="left-panel" style="width:240px; flex-shrink:0; border-right:1px solid var(--border2); overflow-y:auto;">
 
   <!-- PRESETS -->
   <div class="panel-section">
@@ -653,6 +724,14 @@ tailwind.config = {
 </div>
 
 <script>
+// ─────────────────────────────────────────────────────────────────────────────
+// THEME
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('btn-theme').textContent = isLight ? '☾' : '☀︎';
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1312,7 +1391,7 @@ function arcToCanvas(ctx, x1, y1, x2, y2, rx, ry, phi, largeArc, sweep) {
 }
 
 // ── Draw one SVG module instance into the mandala ──
-function drawSVGModule(ctx, cx, cy, angle, outerR, innerR, color, opacity, mode, strokeW, layerScaleMult) {
+function drawSVGModuleTo(ctx, cx, cy, angle, outerR, innerR, color, opacity, mode, strokeW, layerScaleMult) {
   if (!svgModule || !svgModule.shapes.length) return;
 
   const vb = svgModule.viewBox; // [minX, minY, width, height]
@@ -1457,9 +1536,9 @@ function drawPetal(ctx, cx, cy, angle, outerR, innerR, divAngle, opts) {
   ctx.restore();
 }
 
-function drawCenter(ctx, cx, cy) {
+function drawCenterTo(ctx, cx, cy, W, H) {
   if (STATE.centerShape === 'none') return;
-  const size = Math.min(STATE.canvasW, STATE.canvasH);
+  const size = Math.min(W, H);
   const r = size / 2 * STATE.centerRadius / 100;
   const col = STATE.centerColor;
 
@@ -1491,33 +1570,23 @@ function drawCenter(ctx, cx, cy) {
   ctx.restore();
 }
 
-function render() {
-  resizeCanvas();
-  STATE.canvasW = parseInt(document.getElementById('p-canvasW').value) || 800;
-  STATE.canvasH = parseInt(document.getElementById('p-canvasH').value) || 800;
-  canvas.width = STATE.canvasW;
-  canvas.height = STATE.canvasH;
-  const { dw, dh } = getCanvasDisplaySize();
-  canvas.style.width = dw + 'px';
-  canvas.style.height = dh + 'px';
-
-  const W = STATE.canvasW, H = STATE.canvasH;
+// Core drawing function — works on ANY canvas context
+function renderToContext(targetCtx, W, H) {
   const cx = W / 2, cy = H / 2;
 
-  // Background
-  ctx.clearRect(0, 0, W, H);
+  targetCtx.clearRect(0, 0, W, H);
   if (!STATE.transparent) {
-    ctx.fillStyle = STATE.bgColor;
-    ctx.fillRect(0, 0, W, H);
+    targetCtx.fillStyle = STATE.bgColor;
+    targetCtx.fillRect(0, 0, W, H);
   }
 
   // Clipping path
   if (STATE.clipping === 'circle' || STATE.canvasShape === 'circle') {
-    ctx.save();
-    ctx.beginPath();
+    targetCtx.save();
+    targetCtx.beginPath();
     const clipR = Math.min(W, H) / 2 - Math.min(W, H) * STATE.margin / 100;
-    ctx.arc(cx, cy, clipR, 0, Math.PI * 2);
-    ctx.clip();
+    targetCtx.arc(cx, cy, clipR, 0, Math.PI * 2);
+    targetCtx.clip();
   }
 
   // Crop quadrant
@@ -1525,25 +1594,18 @@ function render() {
   if (STATE.cropQ !== 'none') {
     const vis = STATE.cropVis / 100;
     const half = Math.min(W, H) / 2 * vis;
-    let qx = cx, qy = cy;
-    if (STATE.cropQ === 'tl') { ctx.save(); ctx.beginPath(); ctx.rect(cx - half, cy - half, half, half); ctx.clip(); cropClip = true; }
-    if (STATE.cropQ === 'tr') { ctx.save(); ctx.beginPath(); ctx.rect(cx, cy - half, half, half); ctx.clip(); cropClip = true; }
-    if (STATE.cropQ === 'bl') { ctx.save(); ctx.beginPath(); ctx.rect(cx - half, cy, half, half); ctx.clip(); cropClip = true; }
-    if (STATE.cropQ === 'br') { ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, half, half); ctx.clip(); cropClip = true; }
+    if (STATE.cropQ === 'tl') { targetCtx.save(); targetCtx.beginPath(); targetCtx.rect(cx - half, cy - half, half, half); targetCtx.clip(); cropClip = true; }
+    if (STATE.cropQ === 'tr') { targetCtx.save(); targetCtx.beginPath(); targetCtx.rect(cx, cy - half, half, half); targetCtx.clip(); cropClip = true; }
+    if (STATE.cropQ === 'bl') { targetCtx.save(); targetCtx.beginPath(); targetCtx.rect(cx - half, cy, half, half); targetCtx.clip(); cropClip = true; }
+    if (STATE.cropQ === 'br') { targetCtx.save(); targetCtx.beginPath(); targetCtx.rect(cx, cy, half, half); targetCtx.clip(); cropClip = true; }
   }
 
   const layerRadii = computeLayerRadii();
-  const divAngle = (2 * Math.PI) / STATE.divisions;
-  const symCount = STATE.symmetry === 'full' ? STATE.divisions :
-                   STATE.symmetry === 'half' ? Math.floor(STATE.divisions / 2) :
-                   Math.floor(STATE.divisions / 4);
-
   const rotOffsetRad = STATE.rotOffset * Math.PI / 180;
 
   let totalPetals = 0;
 
-  // ── Build sorted layer draw order ──
-  // Collect active layer indices, then sort by draw order mode
+  // Build draw order
   const activeLayerIndices = [];
   for (let i = 0; i < STATE.layerCount; i++) {
     if (STATE.layers[i].visible) activeLayerIndices.push(i);
@@ -1551,53 +1613,31 @@ function render() {
 
   let drawOrder;
   if (STATE.layerOrder === 'outer-top') {
-    // Outer layers (index 0 = largest radius) drawn last = on top
-    // So paint from innermost to outermost: reverse index order
-    drawOrder = [...activeLayerIndices].reverse();
-    // (index 0 drawn last = topmost)
-    // Wait — layers[0] has the largest radius by convention.
-    // "outer on top" means largest radius is drawn last.
-    // We iterate li from high to low (inner to outer), then draw outer last.
-    // Actually: layers[0] = outermost, layers[N-1] = innermost
-    // outer-top: draw innermost first (li=N-1), outermost last (li=0)
-    drawOrder = [...activeLayerIndices]; // 0..N sorted ascending by index
-    // index 0 = outermost drawn LAST
+    drawOrder = [...activeLayerIndices];
   } else if (STATE.layerOrder === 'inner-top') {
-    // Innermost layers on top: draw outermost first, innermost last
-    drawOrder = [...activeLayerIndices].reverse(); // N..0, so 0 drawn first, N drawn last
+    drawOrder = [...activeLayerIndices].reverse();
   } else {
-    // Manual z-index
     drawOrder = [...activeLayerIndices].sort((a, b) => {
-      const za = STATE.layers[a].zIndex ?? a;
-      const zb = STATE.layers[b].zIndex ?? b;
-      return za - zb; // lower zIndex drawn first (behind)
+      return (STATE.layers[a].zIndex ?? a) - (STATE.layers[b].zIndex ?? b);
     });
   }
 
-  // Render layers in draw order
+  // Render each layer
   for (const li of drawOrder) {
     const layer = STATE.layers[li];
-
     const lr = layerRadii[li];
     const outerR = lr.outer;
     const innerR = lr.inner + (outerR - lr.inner) * (1 - layer.thickness / 100) / 2;
 
-    // Per-layer pattern offset in radians
     const layerOffsetRad = ((layer.offset || 0) * Math.PI / 180);
-
-    // Per-layer SVG scale multiplier (100 = fit to band, >100 = bigger, <100 = smaller)
     const layerSvgScale = (layer.svgScale ?? 100) / 100;
-
-    // Per-layer divisions — null means use global STATE.divisions
     const layerDivisions = (layer.divisions !== null && layer.divisions !== undefined)
-      ? Math.round(layer.divisions)
-      : STATE.divisions;
+      ? Math.round(layer.divisions) : STATE.divisions;
     const layerDivAngle = (2 * Math.PI) / layerDivisions;
     const layerSymCount = STATE.symmetry === 'full' ? layerDivisions :
                           STATE.symmetry === 'half' ? Math.floor(layerDivisions / 2) :
                           Math.floor(layerDivisions / 4);
 
-    // Color determination
     let baseColor = layer.color;
     if (STATE.colorMode === 'mono') baseColor = STATE.layers[0].color;
     if (STATE.colorMode === 'two') baseColor = li % 2 === 0 ? STATE.layers[0].color : STATE.layers[1].color;
@@ -1606,8 +1646,6 @@ function render() {
 
     for (let di = 0; di < layerDivisions; di++) {
       if (di >= layerSymCount && STATE.symmetry !== 'full') break;
-
-      // Global offset + per-layer offset applied here
       const baseAngle = di * layerDivAngle + rotOffsetRad + layerOffsetRad - Math.PI / 2;
 
       let petalColor = baseColor;
@@ -1615,18 +1653,14 @@ function render() {
       if (STATE.tonetone && li > 0) petalColor = toneVariant(baseColor, li % 2 === 1);
 
       if (useCustom) {
-        // ── Custom SVG module rendering ──
-        drawSVGModule(ctx, cx, cy, baseAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
+        drawSVGModuleTo(targetCtx, cx, cy, baseAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
         if (STATE.mirror) {
-          const mirrorAngle = -baseAngle + 2 * (rotOffsetRad + layerOffsetRad);
-          drawSVGModule(ctx, cx, cy, mirrorAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
+          drawSVGModuleTo(targetCtx, cx, cy, -baseAngle + 2 * (rotOffsetRad + layerOffsetRad), outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
         }
         if (STATE.altab && di % 2 === 0) {
-          const altColor2 = toneVariant(petalColor, false);
-          drawSVGModule(ctx, cx, cy, baseAngle + layerDivAngle / 2, outerR * 0.8, innerR, altColor2, STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
+          drawSVGModuleTo(targetCtx, cx, cy, baseAngle + layerDivAngle / 2, outerR * 0.8, innerR, toneVariant(petalColor, false), STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
         }
       } else {
-        // ── Built-in parametric petal rendering ──
         const opts = {
           widthPct: STATE.petalWidth - STATE.petalGap,
           heightPct: STATE.petalHeight,
@@ -1643,20 +1677,17 @@ function render() {
           tonetone: STATE.tonetone,
           petalGap: STATE.petalGap,
         };
-
         if (!STATE.negative) {
-          drawPetal(ctx, cx, cy, baseAngle, outerR, innerR, layerDivAngle, opts);
+          drawPetal(targetCtx, cx, cy, baseAngle, outerR, innerR, layerDivAngle, opts);
         }
         if (STATE.mirror) {
-          const mirrorAngle = -baseAngle + 2 * (rotOffsetRad + layerOffsetRad);
-          drawPetal(ctx, cx, cy, mirrorAngle, outerR, innerR, layerDivAngle, opts);
+          drawPetal(targetCtx, cx, cy, -baseAngle + 2 * (rotOffsetRad + layerOffsetRad), outerR, innerR, layerDivAngle, opts);
         }
         if (STATE.altab && di % 2 === 0) {
-          const opts2 = { ...opts, color: toneVariant(petalColor, false), heightPct: opts.heightPct * 0.8 };
-          drawPetal(ctx, cx, cy, baseAngle + layerDivAngle / 2, outerR, innerR, layerDivAngle, opts2);
+          drawPetal(targetCtx, cx, cy, baseAngle + layerDivAngle / 2, outerR, innerR, layerDivAngle,
+            { ...opts, color: toneVariant(petalColor, false), heightPct: opts.heightPct * 0.8 });
         }
       }
-
       totalPetals++;
     }
   }
@@ -1673,65 +1704,68 @@ function render() {
       if (STATE.colorMode === 'mono') baseColor = STATE.layers[0].color;
       if (STATE.colorMode === 'two') baseColor = li % 2 === 0 ? STATE.layers[0].color : STATE.layers[1].color;
 
-      // Draw full annulus
-      ctx.save();
-      ctx.globalAlpha = STATE.opacity / 100;
-      ctx.beginPath();
-      ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
-      ctx.arc(cx, cy, innerR, 0, Math.PI * 2, true);
-      ctx.fillStyle = baseColor;
-      ctx.fill();
-      ctx.restore();
+      targetCtx.save();
+      targetCtx.globalAlpha = STATE.opacity / 100;
+      targetCtx.beginPath();
+      targetCtx.arc(cx, cy, outerR, 0, Math.PI * 2);
+      targetCtx.arc(cx, cy, innerR, 0, Math.PI * 2, true);
+      targetCtx.fillStyle = baseColor;
+      targetCtx.fill();
+      targetCtx.restore();
 
-      // Cut out petals
       const negDivisions = (layer.divisions !== null && layer.divisions !== undefined)
         ? Math.round(layer.divisions) : STATE.divisions;
       const negDivAngle = (2 * Math.PI) / negDivisions;
       for (let di = 0; di < negDivisions; di++) {
         const baseAngle = di * negDivAngle + rotOffsetRad + layerOffsetRad - Math.PI / 2;
-        const opts = {
+        drawPetal(targetCtx, cx, cy, baseAngle, outerR, innerR, negDivAngle, {
           widthPct: STATE.petalWidth - STATE.petalGap,
           heightPct: STATE.petalHeight,
-          taper: STATE.taper,
-          curvature: STATE.curvature,
-          roundness: STATE.roundness,
+          taper: STATE.taper, curvature: STATE.curvature, roundness: STATE.roundness,
           bilateral: STATE.petalSym === 'bilateral',
-          mode: 'fill',
-          strokeW: 0,
+          mode: 'fill', strokeW: 0,
           color: STATE.transparent ? 'rgba(0,0,0,0)' : STATE.bgColor,
-          strokeAlign: 'center',
-          opacity: 100,
-          altColor: false,
-          tonetone: false,
-          petalGap: 0,
-          alwaysStroke: false,
-        };
-        drawPetal(ctx, cx, cy, baseAngle, outerR, innerR, negDivAngle, opts);
+          strokeAlign: 'center', opacity: 100, altColor: false, tonetone: false, petalGap: 0,
+        });
       }
     }
   }
 
-  drawCenter(ctx, cx, cy);
+  drawCenterTo(targetCtx, cx, cy, W, H);
 
-  if (STATE.clipping === 'circle' || STATE.canvasShape === 'circle') ctx.restore();
-  if (cropClip) ctx.restore();
+  if (STATE.clipping === 'circle' || STATE.canvasShape === 'circle') targetCtx.restore();
+  if (cropClip) targetCtx.restore();
 
-  // Print sim overlay
+  return totalPetals;
+}
+
+function render() {
+  STATE.canvasW = parseInt(document.getElementById('p-canvasW').value) || 800;
+  STATE.canvasH = parseInt(document.getElementById('p-canvasH').value) || 800;
+  canvas.width = STATE.canvasW;
+  canvas.height = STATE.canvasH;
+  const { dw, dh } = getCanvasDisplaySize();
+  canvas.style.width = dw + 'px';
+  canvas.style.height = dh + 'px';
+
+  const totalPetals = renderToContext(ctx, STATE.canvasW, STATE.canvasH);
+
+  // Print sim overlay (preview only, not exported)
   if (STATE.printSim) {
+    const W = STATE.canvasW, H = STATE.canvasH;
     ctx.save();
     ctx.strokeStyle = 'rgba(255,60,60,0.7)';
     ctx.lineWidth = 2;
     ctx.setLineDash([4, 4]);
     ctx.strokeRect(W * 0.1, H * 0.1, W * 0.8, H * 0.8);
-    ctx.fillStyle = 'rgba(255,60,60,0.15)';
     ctx.font = 'bold 14px IBM Plex Mono';
     ctx.fillStyle = 'rgba(255,60,60,0.8)';
     ctx.fillText('PRINT SIM — 20mm', W * 0.1 + 4, H * 0.1 - 5);
     ctx.restore();
   }
 
-  document.getElementById('stat-size').textContent = W + ' × ' + H + ' px';
-  document.getElementById('stat-petals').textContent = (totalPetals * (STATE.altab ? 2 : 1)) + ' PETALS';
+  document.getElementById('stat-size').textContent = STATE.canvasW + ' × ' + STATE.canvasH + ' px';
+  document.getElementById('stat-petals').textContent = ((totalPetals || 0) * (STATE.altab ? 2 : 1)) + ' PETALS';
   document.getElementById('stat-mode').textContent = STATE.symmetry.toUpperCase() + ' RADIAL' + (STATE.mirror ? ' + MIRROR' : '');
 
   renderOverlay();
@@ -1859,112 +1893,35 @@ function randomize() {
 // ─────────────────────────────────────────────────────────────────────────────
 // EXPORT
 // ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// EXPORT — all exports capture from the live canvas at full resolution
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXPORT — uses renderToContext for pixel-perfect fidelity with the preview
+// ─────────────────────────────────────────────────────────────────────────────
+
 function exportPNG() {
-  render();
+  const offscreen = document.createElement('canvas');
+  offscreen.width = STATE.canvasW;
+  offscreen.height = STATE.canvasH;
+  renderToContext(offscreen.getContext('2d'), STATE.canvasW, STATE.canvasH);
   const a = document.createElement('a');
   a.download = 'mandala.png';
-  a.href = canvas.toDataURL('image/png');
+  a.href = offscreen.toDataURL('image/png');
   a.click();
 }
 
-function generateSVGString() {
-  const W = STATE.canvasW, H = STATE.canvasH;
-  const cx = W / 2, cy = H / 2;
-
-  let svgPaths = '';
-  const divAngle = (2 * Math.PI) / STATE.divisions;
-  const rotOffsetRad = STATE.rotOffset * Math.PI / 180;
-  const layerRadii = computeLayerRadii();
-
-  function petalPath(cx, cy, angle, outerR, innerR, opts) {
-    const { widthPct, heightPct, taper, curvature, roundness, petalGap } = opts;
-    const halfAngle = (divAngle * widthPct / 100) / 2;
-    const gapAngle = (divAngle * petalGap / 100) / 2;
-    const effectHalfAngle = halfAngle - gapAngle;
-    if (effectHalfAngle <= 0) return '';
-
-    const radialSpan = outerR - innerR;
-    const height = radialSpan * heightPct / 100;
-    const baseR = innerR + (radialSpan - height) / 2;
-    const tipR = Math.min(baseR + height, outerR);
-    const tipHalfAngle = effectHalfAngle * (1 - taper / 100);
-    const curve = curvature / 100;
-
-    function toXY(r, a) {
-      return [cx + r * Math.cos(a + angle), cy + r * Math.sin(a + angle)];
-    }
-
-    const leftBase = toXY(baseR, -effectHalfAngle);
-    const rightBase = toXY(baseR, effectHalfAngle);
-    const leftTip = toXY(tipR, -tipHalfAngle);
-    const rightTip = toXY(tipR, tipHalfAngle);
-
-    const lcp1 = toXY(baseR + height * 0.3 + curve * height * 0.3, -effectHalfAngle * (1 - curve * 0.3));
-    const lcp2 = toXY(tipR - height * 0.2, -tipHalfAngle - effectHalfAngle * curve * 0.3);
-    const rcp1 = toXY(tipR - height * 0.2, tipHalfAngle + effectHalfAngle * curve * 0.3);
-    const rcp2 = toXY(baseR + height * 0.3 + curve * height * 0.3, effectHalfAngle * (1 - curve * 0.3));
-    const tcp1 = toXY(tipR + roundness * height / 400, -tipHalfAngle * 0.5);
-    const tcp2 = toXY(tipR + roundness * height / 400, tipHalfAngle * 0.5);
-    const bcp1 = toXY(baseR - roundness * height / 600, effectHalfAngle * 0.4);
-    const bcp2 = toXY(baseR - roundness * height / 600, -effectHalfAngle * 0.4);
-
-    const f = n => n.toFixed(3);
-    return `M${f(leftBase[0])},${f(leftBase[1])} ` +
-      `C${f(lcp1[0])},${f(lcp1[1])} ${f(lcp2[0])},${f(lcp2[1])} ${f(leftTip[0])},${f(leftTip[1])} ` +
-      `C${f(tcp1[0])},${f(tcp1[1])} ${f(tcp2[0])},${f(tcp2[1])} ${f(rightTip[0])},${f(rightTip[1])} ` +
-      `C${f(rcp1[0])},${f(rcp1[1])} ${f(rcp2[0])},${f(rcp2[1])} ${f(rightBase[0])},${f(rightBase[1])} ` +
-      `C${f(bcp1[0])},${f(bcp1[1])} ${f(bcp2[0])},${f(bcp2[1])} ${f(leftBase[0])},${f(leftBase[1])} Z`;
-  }
-
-  const bgRect = STATE.transparent ? '' :
-    `<rect width="${W}" height="${H}" fill="${STATE.bgColor}"/>`;
-
-  for (let li = STATE.layerCount - 1; li >= 0; li--) {
-    const layer = STATE.layers[li];
-    if (!layer.visible) continue;
-    const lr = layerRadii[li];
-    const outerR = lr.outer;
-    const innerR = lr.inner + (outerR - lr.inner) * (1 - layer.thickness / 100) / 2;
-    let color = STATE.colorMode === 'mono' ? STATE.layers[0].color :
-               STATE.colorMode === 'two' ? (li % 2 === 0 ? STATE.layers[0].color : STATE.layers[1].color) :
-               layer.color;
-
-    for (let di = 0; di < STATE.divisions; di++) {
-      const angle = di * divAngle + rotOffsetRad - Math.PI / 2;
-      const d = petalPath(cx, cy, angle, outerR, innerR, {
-        widthPct: STATE.petalWidth - STATE.petalGap,
-        heightPct: STATE.petalHeight, taper: STATE.taper,
-        curvature: STATE.curvature, roundness: STATE.roundness,
-        petalGap: STATE.petalGap,
-      });
-      if (!d) continue;
-      const fill = STATE.petalMode === 'stroke' ? 'none' : color;
-      const stroke = STATE.petalMode === 'fill' ? 'none' : color;
-      const sw = Math.max(STATE.strokeW, STATE.minStroke);
-      svgPaths += `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" opacity="${STATE.opacity / 100}"/>\n`;
-    }
-  }
-
-  // Center
-  if (STATE.centerShape !== 'none') {
-    const r = Math.min(W, H) / 2 * STATE.centerRadius / 100;
-    if (STATE.centerShape === 'circle') {
-      const fill = STATE.centerMode === 'fill' ? STATE.centerColor : 'none';
-      const stroke = STATE.centerMode === 'stroke' ? STATE.centerColor : 'none';
-      svgPaths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${STATE.strokeW}"/>`;
-    }
-  }
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-${bgRect}
-${svgPaths}
-</svg>`;
-}
-
 function exportSVG() {
-  const svg = generateSVGString();
-  const blob = new Blob([svg], { type: 'image/svg+xml' });
+  // Render to offscreen at full res, embed in SVG for universal compatibility
+  const offscreen = document.createElement('canvas');
+  offscreen.width = STATE.canvasW;
+  offscreen.height = STATE.canvasH;
+  renderToContext(offscreen.getContext('2d'), STATE.canvasW, STATE.canvasH);
+  const W = STATE.canvasW, H = STATE.canvasH;
+  const dataURL = offscreen.toDataURL('image/png');
+  const svgStr = `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">\n  <image width="${W}" height="${H}" xlink:href="${dataURL}"/>\n</svg>`;
+  const blob = new Blob([svgStr], { type: 'image/svg+xml' });
   const a = document.createElement('a');
   a.download = 'mandala.svg';
   a.href = URL.createObjectURL(blob);
