@@ -330,10 +330,39 @@ tailwind.config = {
           <input type="range" id="p-layerThickness" min="1" max="50" value="20" step="1" oninput="syncLayerProp('thickness',this.value);scheduleRender()">
           <span class="param-value" id="v-layerThickness">20%</span>
         </div>
+        <div class="param-row" style="align-items:flex-start; flex-direction:column; gap:4px;">
+          <div style="display:flex; align-items:center; gap:6px; width:100%;">
+            <span class="param-label" style="color:#e8ff3c88; min-width:80px;">DIVISIONS</span>
+            <div class="toggle-btn" id="toggle-layerDivisionsLock" onclick="toggleLayerDivisions()" style="font-size:8px; width:36px;">GLOBAL</div>
+          </div>
+          <div id="layer-divisions-row" style="display:none; width:100%; display:flex; align-items:center; gap:6px;">
+            <input type="range" id="p-layerDivisions" min="1" max="48" value="8" step="1" oninput="syncLayerProp('divisions',this.value);scheduleRender()" style="flex:1;">
+            <span class="param-value" id="v-layerDivisions">8</span>
+          </div>
+        </div>
         <div class="param-row">
           <span class="param-label" style="color:#e8ff3c88;">OFFSET °</span>
           <input type="range" id="p-layerOffset" min="0" max="180" value="0" step="1" oninput="syncLayerProp('offset',this.value);scheduleRender()">
           <span class="param-value" id="v-layerOffset">0°</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label" style="color:#e8ff3c88;">SVG SCALE</span>
+          <input type="range" id="p-layerSvgScale" min="10" max="300" value="100" step="5" oninput="syncLayerProp('svgScale',this.value);scheduleRender()">
+          <span class="param-value" id="v-layerSvgScale">100%</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label" style="color:#e8ff3c88;">Z-INDEX</span>
+          <input type="range" id="p-layerZIndex" min="0" max="4" value="0" step="1" oninput="syncLayerProp('zIndex',this.value);scheduleRender()">
+          <span class="param-value" id="v-layerZIndex">0</span>
+        </div>
+        <div style="border-top:1px solid #1a1a1a; margin: 6px 0 8px;"></div>
+        <div class="param-row">
+          <span class="param-label">DRAW ORDER</span>
+          <div class="seg-control" style="flex:1;">
+            <div class="seg-btn active" data-param="layerOrder" data-val="outer-top" onclick="setSeg(this,'layerOrder')">OUT↑</div>
+            <div class="seg-btn" data-param="layerOrder" data-val="inner-top" onclick="setSeg(this,'layerOrder')">IN↑</div>
+            <div class="seg-btn" data-param="layerOrder" data-val="manual" onclick="setSeg(this,'layerOrder')">Z-IDX</div>
+          </div>
         </div>
         <div class="param-row">
           <span class="param-label">SCALE MODE</span>
@@ -639,13 +668,13 @@ const STATE = {
   // layers
   layerCount: 3,
   layers: [
-    { radius: 90, thickness: 22, visible: true, color: '#e8ff3c', offset: 0 },
-    { radius: 62, thickness: 20, visible: true, color: '#cccccc', offset: 0 },
-    { radius: 36, thickness: 18, visible: true, color: '#888888', offset: 0 },
-    { radius: 18, thickness: 14, visible: true, color: '#555555', offset: 0 },
-    { radius: 8,  thickness: 10, visible: true, color: '#333333', offset: 0 },
+    { radius: 90, thickness: 22, visible: true, color: '#e8ff3c', offset: 0, svgScale: 100, zIndex: 0, divisions: null },
+    { radius: 62, thickness: 20, visible: true, color: '#cccccc', offset: 0, svgScale: 100, zIndex: 1, divisions: null },
+    { radius: 36, thickness: 18, visible: true, color: '#888888', offset: 0, svgScale: 100, zIndex: 2, divisions: null },
+    { radius: 18, thickness: 14, visible: true, color: '#555555', offset: 0, svgScale: 100, zIndex: 3, divisions: null },
+    { radius: 8,  thickness: 10, visible: true, color: '#333333', offset: 0, svgScale: 100, zIndex: 4, divisions: null },
   ],
-  scaleMode: 'linear', layerGap: 3,
+  scaleMode: 'linear', layerGap: 3, layerOrder: 'outer-top',
   activeLayer: 0,
 
   // petal module
@@ -827,6 +856,12 @@ function syncLayerCount(input) {
   document.getElementById('v-layerCount').textContent = v;
   STATE.layerCount = v;
   if (STATE.activeLayer >= v) STATE.activeLayer = v - 1;
+  // Ensure all layers have the new fields
+  for (let i = 0; i < STATE.layers.length; i++) {
+    if (STATE.layers[i].svgScale === undefined) STATE.layers[i].svgScale = 100;
+    if (STATE.layers[i].zIndex === undefined) STATE.layers[i].zIndex = i;
+    if (!('divisions' in STATE.layers[i])) STATE.layers[i].divisions = null;
+  }
   renderLayerChips();
   renderLayerColors();
 }
@@ -856,20 +891,64 @@ function selectLayer(i) {
 
 function updateLayerControls() {
   const l = STATE.layers[STATE.activeLayer];
-  const rSlider = document.getElementById('p-layerRadius');
-  const tSlider = document.getElementById('p-layerThickness');
-  const oSlider = document.getElementById('p-layerOffset');
-  if (rSlider) { rSlider.value = l.radius; document.getElementById('v-layerRadius').textContent = l.radius + '%'; }
-  if (tSlider) { tSlider.value = l.thickness; document.getElementById('v-layerThickness').textContent = l.thickness + '%'; }
-  if (oSlider) { oSlider.value = l.offset || 0; document.getElementById('v-layerOffset').textContent = (l.offset || 0) + '°'; }
+  const set = (id, vid, val, fmt) => {
+    const el = document.getElementById(id);
+    const vel = document.getElementById(vid);
+    if (el) el.value = val;
+    if (vel) vel.textContent = fmt(val);
+  };
+  set('p-layerRadius',   'v-layerRadius',   l.radius,             v => v + '%');
+  set('p-layerThickness','v-layerThickness', l.thickness,          v => v + '%');
+  set('p-layerOffset',   'v-layerOffset',   l.offset || 0,        v => v + '°');
+  set('p-layerSvgScale', 'v-layerSvgScale', l.svgScale ?? 100,    v => v + '%');
+  set('p-layerZIndex',   'v-layerZIndex',   l.zIndex ?? STATE.activeLayer, v => v);
+
+  // Divisions toggle
+  const hasCustomDivs = l.divisions !== null && l.divisions !== undefined;
+  const lockBtn = document.getElementById('toggle-layerDivisionsLock');
+  const divRow = document.getElementById('layer-divisions-row');
+  if (lockBtn) {
+    lockBtn.textContent = hasCustomDivs ? 'CUSTOM' : 'GLOBAL';
+    lockBtn.classList.toggle('on', hasCustomDivs);
+  }
+  if (divRow) {
+    divRow.style.display = hasCustomDivs ? 'flex' : 'none';
+    if (hasCustomDivs) {
+      const divVal = l.divisions;
+      set('p-layerDivisions', 'v-layerDivisions', divVal, v => v);
+    }
+  }
+}
+
+function toggleLayerDivisions() {
+  const l = STATE.layers[STATE.activeLayer];
+  if (l.divisions === null || l.divisions === undefined) {
+    // Enable custom — default to current global divisions
+    l.divisions = STATE.divisions;
+  } else {
+    // Reset to global
+    l.divisions = null;
+  }
+  updateLayerControls();
+  scheduleRender();
 }
 
 function syncLayerProp(prop, val) {
   const v = parseFloat(val);
   STATE.layers[STATE.activeLayer][prop] = v;
-  if (prop === 'radius') document.getElementById('v-layerRadius').textContent = val + '%';
-  if (prop === 'thickness') document.getElementById('v-layerThickness').textContent = val + '%';
-  if (prop === 'offset') document.getElementById('v-layerOffset').textContent = val + '°';
+  const labelMap = {
+    radius: ['v-layerRadius', v => v + '%'],
+    thickness: ['v-layerThickness', v => v + '%'],
+    offset: ['v-layerOffset', v => v + '°'],
+    svgScale: ['v-layerSvgScale', v => v + '%'],
+    zIndex: ['v-layerZIndex', v => Math.round(v)],
+    divisions: ['v-layerDivisions', v => Math.round(v)],
+  };
+  if (labelMap[prop]) {
+    const [vid, fmt] = labelMap[prop];
+    const vel = document.getElementById(vid);
+    if (vel) vel.textContent = fmt(v);
+  }
 }
 
 function renderLayerColors() {
@@ -1233,7 +1312,7 @@ function arcToCanvas(ctx, x1, y1, x2, y2, rx, ry, phi, largeArc, sweep) {
 }
 
 // ── Draw one SVG module instance into the mandala ──
-function drawSVGModule(ctx, cx, cy, angle, outerR, innerR, color, opacity, mode, strokeW) {
+function drawSVGModule(ctx, cx, cy, angle, outerR, innerR, color, opacity, mode, strokeW, layerScaleMult) {
   if (!svgModule || !svgModule.shapes.length) return;
 
   const vb = svgModule.viewBox; // [minX, minY, width, height]
@@ -1243,9 +1322,9 @@ function drawSVGModule(ctx, cx, cy, angle, outerR, innerR, color, opacity, mode,
   const radialSpan = outerR - innerR;
   const centerR = (innerR + outerR) / 2;
 
-  // Scale to fit the SVG into the radial band slot
+  // Scale: fit to radial band, then apply global SVG scale + per-layer scale multiplier
   const scaleBase = radialSpan / vbH;
-  const scale = scaleBase * (STATE.svgScale / 100);
+  const scale = scaleBase * (STATE.svgScale / 100) * (layerScaleMult ?? 1);
 
   const svgRotRad = STATE.svgRot * Math.PI / 180;
 
@@ -1463,10 +1542,41 @@ function render() {
 
   let totalPetals = 0;
 
-  // Render layers (back to front)
-  for (let li = STATE.layerCount - 1; li >= 0; li--) {
+  // ── Build sorted layer draw order ──
+  // Collect active layer indices, then sort by draw order mode
+  const activeLayerIndices = [];
+  for (let i = 0; i < STATE.layerCount; i++) {
+    if (STATE.layers[i].visible) activeLayerIndices.push(i);
+  }
+
+  let drawOrder;
+  if (STATE.layerOrder === 'outer-top') {
+    // Outer layers (index 0 = largest radius) drawn last = on top
+    // So paint from innermost to outermost: reverse index order
+    drawOrder = [...activeLayerIndices].reverse();
+    // (index 0 drawn last = topmost)
+    // Wait — layers[0] has the largest radius by convention.
+    // "outer on top" means largest radius is drawn last.
+    // We iterate li from high to low (inner to outer), then draw outer last.
+    // Actually: layers[0] = outermost, layers[N-1] = innermost
+    // outer-top: draw innermost first (li=N-1), outermost last (li=0)
+    drawOrder = [...activeLayerIndices]; // 0..N sorted ascending by index
+    // index 0 = outermost drawn LAST
+  } else if (STATE.layerOrder === 'inner-top') {
+    // Innermost layers on top: draw outermost first, innermost last
+    drawOrder = [...activeLayerIndices].reverse(); // N..0, so 0 drawn first, N drawn last
+  } else {
+    // Manual z-index
+    drawOrder = [...activeLayerIndices].sort((a, b) => {
+      const za = STATE.layers[a].zIndex ?? a;
+      const zb = STATE.layers[b].zIndex ?? b;
+      return za - zb; // lower zIndex drawn first (behind)
+    });
+  }
+
+  // Render layers in draw order
+  for (const li of drawOrder) {
     const layer = STATE.layers[li];
-    if (!layer.visible) continue;
 
     const lr = layerRadii[li];
     const outerR = lr.outer;
@@ -1475,6 +1585,18 @@ function render() {
     // Per-layer pattern offset in radians
     const layerOffsetRad = ((layer.offset || 0) * Math.PI / 180);
 
+    // Per-layer SVG scale multiplier (100 = fit to band, >100 = bigger, <100 = smaller)
+    const layerSvgScale = (layer.svgScale ?? 100) / 100;
+
+    // Per-layer divisions — null means use global STATE.divisions
+    const layerDivisions = (layer.divisions !== null && layer.divisions !== undefined)
+      ? Math.round(layer.divisions)
+      : STATE.divisions;
+    const layerDivAngle = (2 * Math.PI) / layerDivisions;
+    const layerSymCount = STATE.symmetry === 'full' ? layerDivisions :
+                          STATE.symmetry === 'half' ? Math.floor(layerDivisions / 2) :
+                          Math.floor(layerDivisions / 4);
+
     // Color determination
     let baseColor = layer.color;
     if (STATE.colorMode === 'mono') baseColor = STATE.layers[0].color;
@@ -1482,11 +1604,11 @@ function render() {
 
     const useCustom = STATE.moduleSource === 'custom' && svgModule && svgModule.shapes.length > 0;
 
-    for (let di = 0; di < STATE.divisions; di++) {
-      if (di >= symCount && STATE.symmetry !== 'full') break;
+    for (let di = 0; di < layerDivisions; di++) {
+      if (di >= layerSymCount && STATE.symmetry !== 'full') break;
 
       // Global offset + per-layer offset applied here
-      const baseAngle = di * divAngle + rotOffsetRad + layerOffsetRad - Math.PI / 2;
+      const baseAngle = di * layerDivAngle + rotOffsetRad + layerOffsetRad - Math.PI / 2;
 
       let petalColor = baseColor;
       if (STATE.altcolor && di % 2 === 1) petalColor = toneVariant(baseColor, true);
@@ -1494,14 +1616,14 @@ function render() {
 
       if (useCustom) {
         // ── Custom SVG module rendering ──
-        drawSVGModule(ctx, cx, cy, baseAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW);
+        drawSVGModule(ctx, cx, cy, baseAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
         if (STATE.mirror) {
           const mirrorAngle = -baseAngle + 2 * (rotOffsetRad + layerOffsetRad);
-          drawSVGModule(ctx, cx, cy, mirrorAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW);
+          drawSVGModule(ctx, cx, cy, mirrorAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
         }
         if (STATE.altab && di % 2 === 0) {
           const altColor2 = toneVariant(petalColor, false);
-          drawSVGModule(ctx, cx, cy, baseAngle + divAngle / 2, outerR * 0.8, innerR, altColor2, STATE.opacity, STATE.petalMode, STATE.strokeW);
+          drawSVGModule(ctx, cx, cy, baseAngle + layerDivAngle / 2, outerR * 0.8, innerR, altColor2, STATE.opacity, STATE.petalMode, STATE.strokeW, layerSvgScale);
         }
       } else {
         // ── Built-in parametric petal rendering ──
@@ -1523,15 +1645,15 @@ function render() {
         };
 
         if (!STATE.negative) {
-          drawPetal(ctx, cx, cy, baseAngle, outerR, innerR, divAngle, opts);
+          drawPetal(ctx, cx, cy, baseAngle, outerR, innerR, layerDivAngle, opts);
         }
         if (STATE.mirror) {
           const mirrorAngle = -baseAngle + 2 * (rotOffsetRad + layerOffsetRad);
-          drawPetal(ctx, cx, cy, mirrorAngle, outerR, innerR, divAngle, opts);
+          drawPetal(ctx, cx, cy, mirrorAngle, outerR, innerR, layerDivAngle, opts);
         }
         if (STATE.altab && di % 2 === 0) {
           const opts2 = { ...opts, color: toneVariant(petalColor, false), heightPct: opts.heightPct * 0.8 };
-          drawPetal(ctx, cx, cy, baseAngle + divAngle / 2, outerR, innerR, divAngle, opts2);
+          drawPetal(ctx, cx, cy, baseAngle + layerDivAngle / 2, outerR, innerR, layerDivAngle, opts2);
         }
       }
 
@@ -1541,9 +1663,8 @@ function render() {
 
   // Negative space overlay (built-in only)
   if (STATE.negative && STATE.moduleSource !== 'custom') {
-    for (let li = STATE.layerCount - 1; li >= 0; li--) {
+    for (const li of drawOrder) {
       const layer = STATE.layers[li];
-      if (!layer.visible) continue;
       const lr = layerRadii[li];
       const outerR = lr.outer;
       const innerR = lr.inner + (outerR - lr.inner) * (1 - layer.thickness / 100) / 2;
@@ -1563,8 +1684,11 @@ function render() {
       ctx.restore();
 
       // Cut out petals
-      for (let di = 0; di < STATE.divisions; di++) {
-        const baseAngle = di * divAngle + rotOffsetRad + layerOffsetRad - Math.PI / 2;
+      const negDivisions = (layer.divisions !== null && layer.divisions !== undefined)
+        ? Math.round(layer.divisions) : STATE.divisions;
+      const negDivAngle = (2 * Math.PI) / negDivisions;
+      for (let di = 0; di < negDivisions; di++) {
+        const baseAngle = di * negDivAngle + rotOffsetRad + layerOffsetRad - Math.PI / 2;
         const opts = {
           widthPct: STATE.petalWidth - STATE.petalGap,
           heightPct: STATE.petalHeight,
@@ -1582,7 +1706,7 @@ function render() {
           petalGap: 0,
           alwaysStroke: false,
         };
-        drawPetal(ctx, cx, cy, baseAngle, outerR, innerR, divAngle, opts);
+        drawPetal(ctx, cx, cy, baseAngle, outerR, innerR, negDivAngle, opts);
       }
     }
   }
@@ -1940,7 +2064,7 @@ function syncUIFromState() {
 
   // Seg controls
   const segs = ['canvasShape', 'symmetry', 'scaleMode', 'petalSym', 'petalMode', 'strokeAlign',
-                 'centerShape', 'centerMode', 'clipping', 'colorMode', 'cropQ', 'maskShape', 'moduleSource'];
+                 'centerShape', 'centerMode', 'clipping', 'colorMode', 'cropQ', 'maskShape', 'moduleSource', 'layerOrder'];
   segs.forEach(param => {
     document.querySelectorAll(`.seg-btn[data-param="${param}"]`).forEach(b => {
       b.classList.toggle('active', b.dataset.val === STATE[param]);
