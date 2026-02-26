@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MANDALA — Parametric Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        mono: ['IBM Plex Mono', 'monospace'],
+        sans: ['IBM Plex Sans', 'sans-serif'],
+      },
+      colors: {
+        bg: '#0a0a0a',
+        panel: '#111111',
+        border: '#222222',
+        accent: '#e8ff3c',
+        muted: '#444444',
+        text: '#cccccc',
+        dim: '#666666',
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { background: #0a0a0a; color: #cccccc; font-family: 'IBM Plex Mono', monospace; overflow: hidden; height: 100vh; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+  .panel-section { border-bottom: 1px solid #1e1e1e; }
+  .panel-section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; cursor: pointer; user-select: none;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: #666; transition: color 0.15s;
+  }
+  .section-header:hover { color: #ccc; }
+  .section-header.active { color: #e8ff3c; }
+  .section-content { padding: 10px 12px; display: none; }
+  .section-content.open { display: block; }
+
+  .param-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+  .param-label { font-size: 9px; color: #555; letter-spacing: 0.08em; text-transform: uppercase; flex: 0 0 auto; min-width: 80px; }
+  .param-value { font-size: 10px; color: #e8ff3c; font-weight: 500; min-width: 36px; text-align: right; }
+
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 2px; background: #222; outline: none;
+    border-radius: 0; cursor: pointer; flex: 1;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 10px; height: 10px; background: #e8ff3c;
+    border-radius: 0; cursor: pointer; border: none;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { background: #fff; }
+
+  input[type=number], input[type=text] {
+    background: #0d0d0d; border: 1px solid #222; color: #ccc;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    padding: 3px 6px; outline: none; width: 60px; text-align: right;
+  }
+  input[type=number]:focus, input[type=text]:focus { border-color: #444; color: #fff; }
+
+  input[type=color] {
+    -webkit-appearance: none; appearance: none;
+    width: 24px; height: 18px; border: 1px solid #333; cursor: pointer;
+    padding: 0; background: none;
+  }
+  input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+  input[type=color]::-webkit-color-swatch { border: none; }
+
+  .toggle-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 18px; border: 1px solid #333; cursor: pointer;
+    font-size: 8px; letter-spacing: 0.05em; color: #555; transition: all 0.15s;
+    user-select: none;
+  }
+  .toggle-btn.on { border-color: #e8ff3c; color: #e8ff3c; background: rgba(232,255,60,0.05); }
+
+  .seg-control { display: flex; gap: 0; }
+  .seg-btn {
+    flex: 1; padding: 3px 0; font-size: 8px; letter-spacing: 0.1em;
+    text-transform: uppercase; text-align: center; cursor: pointer;
+    border: 1px solid #222; color: #444; transition: all 0.15s; user-select: none;
+  }
+  .seg-btn:not(:first-child) { border-left: none; }
+  .seg-btn:hover { color: #888; border-color: #333; }
+  .seg-btn.active { color: #e8ff3c; border-color: #e8ff3c; background: rgba(232,255,60,0.06); }
+
+  .action-btn {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 6px 10px; border: 1px solid #333; background: transparent;
+    color: #666; cursor: pointer; transition: all 0.15s; width: 100%;
+    margin-bottom: 4px;
+  }
+  .action-btn:hover { border-color: #666; color: #ccc; }
+  .action-btn.primary { border-color: #e8ff3c; color: #e8ff3c; }
+  .action-btn.primary:hover { background: #e8ff3c; color: #000; }
+
+  .layer-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 7px; border: 1px solid #222; font-size: 9px;
+    cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .layer-chip.active { border-color: #e8ff3c; color: #e8ff3c; }
+  .layer-chip .vis-dot { width: 5px; height: 5px; background: #444; border-radius: 50%; }
+  .layer-chip.active .vis-dot { background: #e8ff3c; }
+
+  .canvas-wrap {
+    display: flex; align-items: center; justify-content: center;
+    flex: 1; background: #0a0a0a; position: relative; overflow: hidden;
+  }
+
+  canvas { max-width: 100%; max-height: 100%; }
+
+  .status-bar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 5px 14px; border-top: 1px solid #1a1a1a;
+    font-size: 9px; color: #444; letter-spacing: 0.08em;
+  }
+  .status-dot { width: 4px; height: 4px; border-radius: 50%; background: #e8ff3c; display: inline-block; }
+
+  select {
+    background: #0d0d0d; border: 1px solid #222; color: #aaa;
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+    padding: 3px 6px; outline: none; cursor: pointer; flex: 1;
+  }
+  select:focus { border-color: #444; }
+  option { background: #111; }
+
+  .grid-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+
+  #undo-btn, #redo-btn {
+    width: 28px; height: 22px; border: 1px solid #222; background: transparent;
+    color: #444; cursor: pointer; font-size: 11px; display: flex;
+    align-items: center; justify-content: center; transition: all 0.15s;
+    font-family: monospace;
+  }
+  #undo-btn:hover, #redo-btn:hover { border-color: #555; color: #aaa; }
+
+  .top-bar-btn {
+    font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 4px 10px; border: 1px solid #222; background: transparent;
+    color: #555; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .top-bar-btn:hover { border-color: #555; color: #aaa; }
+  .top-bar-btn.active { border-color: #e8ff3c; color: #e8ff3c; }
+
+  .preset-chip {
+    padding: 4px 10px; border: 1px solid #222; font-size: 9px;
+    cursor: pointer; transition: all 0.15s; text-align: center;
+    letter-spacing: 0.08em; color: #555;
+  }
+  .preset-chip:hover { border-color: #555; color: #aaa; }
+  .preset-chip.active { border-color: #e8ff3c; color: #e8ff3c; }
+
+  .tooltip { position: relative; }
+  textarea {
+    background: #060606; border: 1px solid #222; color: #aaa;
+    font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+    padding: 6px; resize: vertical; outline: none; line-height: 1.5;
+    width: 100%;
+  }
+  textarea:focus { border-color: #444; color: #ccc; }
+  .tooltip:hover::after {
+    content: attr(data-tip);
+    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+    background: #1a1a1a; border: 1px solid #333; padding: 3px 7px;
+    font-size: 8px; color: #aaa; white-space: nowrap; z-index: 100;
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div style="height:38px; border-bottom:1px solid #1a1a1a; display:flex; align-items:center; padding:0 14px; gap:10px; background:#0d0d0d; flex-shrink:0;">
+  <span style="font-size:11px; font-weight:600; letter-spacing:0.2em; color:#e8ff3c; margin-right:8px;">MANDALA</span>
+  <span style="font-size:8px; color:#333; margin-right:4px;">PARAMETRIC GENERATOR v1.0</span>
+  <div style="flex:1;"></div>
+  <button id="undo-btn" class="tooltip" data-tip="Undo (Ctrl+Z)">↩</button>
+  <button id="redo-btn" class="tooltip" data-tip="Redo (Ctrl+Y)">↪</button>
+  <div style="width:1px; height:18px; background:#1e1e1e; margin:0 4px;"></div>
+  <button class="top-bar-btn" id="btn-grid" onclick="toggleGrid()">GRID</button>
+  <button class="top-bar-btn" id="btn-angles" onclick="toggleAngles()">ANGLES</button>
+  <button class="top-bar-btn" id="btn-print-sim" onclick="togglePrintSim()">PRINT SIM</button>
+  <div style="width:1px; height:18px; background:#1e1e1e; margin:0 4px;"></div>
+  <button class="top-bar-btn" onclick="exportSVG()">SVG</button>
+  <button class="top-bar-btn" onclick="exportPNG()">PNG</button>
+  <button class="top-bar-btn" onclick="exportJSON()">JSON</button>
+  <button class="top-bar-btn" onclick="importJSON()">IMPORT</button>
+  <input type="file" id="json-import" accept=".json" style="display:none" onchange="handleJSONImport(event)">
+</div>
+
+<div style="display:flex; height:calc(100vh - 38px);">
+
+<!-- LEFT PANEL -->
+<div style="width:240px; flex-shrink:0; border-right:1px solid #1a1a1a; overflow-y:auto; background:#0d0d0d;">
+
+  <!-- PRESETS -->
+  <div class="panel-section">
+    <div class="section-header active" onclick="toggleSection('presets')">
+      <span>PRESETS</span><span id="arrow-presets">▾</span>
+    </div>
+    <div class="section-content open" id="sec-presets">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; margin-bottom:4px;">
+        <div class="preset-chip" onclick="applyPreset('minimal')">MINIMAL</div>
+        <div class="preset-chip" onclick="applyPreset('ornamental')">ORNAMENTAL</div>
+        <div class="preset-chip" onclick="applyPreset('fragment')">FRAGMENT</div>
+        <div class="preset-chip" onclick="applyPreset('brand')">BRAND</div>
+      </div>
+      <button class="action-btn" onclick="randomize()" style="margin-top:4px;">⚡ RANDOMIZE</button>
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="panel-section">
+    <div class="section-header" onclick="toggleSection('canvas')">
+      <span>CANVAS & OUTPUT</span><span id="arrow-canvas">▸</span>
+    </div>
+    <div class="section-content" id="sec-canvas">
+      <div class="param-row">
+        <span class="param-label">WIDTH</span>
+        <input type="number" id="p-canvasW" value="800" min="200" max="2400" onchange="scheduleRender()" style="width:55px;">
+        <span style="font-size:9px; color:#444;">px</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">HEIGHT</span>
+        <input type="number" id="p-canvasH" value="800" min="200" max="2400" onchange="scheduleRender()" style="width:55px;">
+        <span style="font-size:9px; color:#444;">px</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">FORMAT</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="canvasShape" data-val="square" onclick="setSeg(this,'canvasShape')">SQ</div>
+          <div class="seg-btn" data-param="canvasShape" data-val="circle" onclick="setSeg(this,'canvasShape')">CIR</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">MARGIN</span>
+        <input type="range" id="p-margin" min="0" max="20" value="5" step="1" oninput="syncVal(this,'v-margin');scheduleRender()">
+        <span class="param-value" id="v-margin">5%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">BG COLOR</span>
+        <input type="color" id="p-bgColor" value="#0a0a0a" onchange="scheduleRender()">
+        <div class="toggle-btn" id="toggle-transparent" onclick="toggleParam('transparent')" style="margin-left:4px;">α</div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">MIN STROKE</span>
+        <input type="range" id="p-minStroke" min="0.1" max="3" value="0.5" step="0.1" oninput="syncVal(this,'v-minStroke');scheduleRender()">
+        <span class="param-value" id="v-minStroke">0.5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RADIAL STRUCTURE -->
+  <div class="panel-section">
+    <div class="section-header" onclick="toggleSection('radial')">
+      <span>RADIAL STRUCTURE</span><span id="arrow-radial">▸</span>
+    </div>
+    <div class="section-content" id="sec-radial">
+      <div class="param-row">
+        <span class="param-label">DIVISIONS</span>
+        <input type="range" id="p-divisions" min="4" max="24" value="8" step="1" oninput="syncVal(this,'v-divisions');scheduleRender()">
+        <span class="param-value" id="v-divisions">8</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">ANGLE</span>
+        <span class="param-value" id="v-angle" style="color:#555; min-width:auto; flex:1; text-align:right; font-size:9px;">45.0°</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">OFFSET</span>
+        <input type="range" id="p-rotOffset" min="0" max="360" value="0" step="1" oninput="syncVal(this,'v-rotOffset');scheduleRender()">
+        <span class="param-value" id="v-rotOffset">0°</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">SYMMETRY</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="symmetry" data-val="full" onclick="setSeg(this,'symmetry')">FULL</div>
+          <div class="seg-btn" data-param="symmetry" data-val="half" onclick="setSeg(this,'symmetry')">HALF</div>
+          <div class="seg-btn" data-param="symmetry" data-val="quarter" onclick="setSeg(this,'symmetry')">QTR</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">MIRROR</span>
+        <div class="toggle-btn" id="toggle-mirror" onclick="toggleParam('mirror')">OFF</div>
+        <span class="param-label" style="margin-left:8px;">ALTAB</span>
+        <div class="toggle-btn" id="toggle-altab" onclick="toggleParam('altab')">OFF</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYERS -->
+  <div class="panel-section">
+    <div class="section-header" onclick="toggleSection('layers')">
+      <span>LAYERS</span><span id="arrow-layers">▸</span>
+    </div>
+    <div class="section-content" id="sec-layers">
+      <div class="param-row">
+        <span class="param-label">COUNT</span>
+        <input type="range" id="p-layerCount" min="1" max="5" value="3" step="1" oninput="syncLayerCount(this);scheduleRender()">
+        <span class="param-value" id="v-layerCount">3</span>
+      </div>
+      <div id="layer-chips" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;"></div>
+
+      <div id="layer-controls">
+        <div class="param-row">
+          <span class="param-label">RADIUS</span>
+          <input type="range" id="p-layerRadius" min="5" max="100" value="80" step="1" oninput="syncLayerProp('radius',this.value);scheduleRender()">
+          <span class="param-value" id="v-layerRadius">80%</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">THICKNESS</span>
+          <input type="range" id="p-layerThickness" min="1" max="50" value="20" step="1" oninput="syncLayerProp('thickness',this.value);scheduleRender()">
+          <span class="param-value" id="v-layerThickness">20%</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label" style="color:#e8ff3c88;">OFFSET °</span>
+          <input type="range" id="p-layerOffset" min="0" max="180" value="0" step="1" oninput="syncLayerProp('offset',this.value);scheduleRender()">
+          <span class="param-value" id="v-layerOffset">0°</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">SCALE MODE</span>
+          <div class="seg-control" style="flex:1;">
+            <div class="seg-btn active" data-param="scaleMode" data-val="linear" onclick="setSeg(this,'scaleMode')">LIN</div>
+            <div class="seg-btn" data-param="scaleMode" data-val="exp" onclick="setSeg(this,'scaleMode')">EXP</div>
+            <div class="seg-btn" data-param="scaleMode" data-val="manual" onclick="setSeg(this,'scaleMode')">MAN</div>
+          </div>
+        </div>
+        <div class="param-row">
+          <span class="param-label">GAP</span>
+          <input type="range" id="p-layerGap" min="0" max="20" value="3" step="1" oninput="syncVal(this,'v-layerGap');scheduleRender()">
+          <span class="param-value" id="v-layerGap">3%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PETAL MODULE -->
+  <div class="panel-section">
+    <div class="section-header" onclick="toggleSection('petal')">
+      <span>PETAL MODULE</span><span id="arrow-petal">▸</span>
+    </div>
+    <div class="section-content" id="sec-petal">
+      <!-- Module source selector -->
+      <div class="param-row" style="margin-bottom:10px;">
+        <span class="param-label">SOURCE</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="moduleSource" data-val="builtin" onclick="setSeg(this,'moduleSource');toggleCustomSVGPanel()">BUILT-IN</div>
+          <div class="seg-btn" data-param="moduleSource" data-val="custom" onclick="setSeg(this,'moduleSource');toggleCustomSVGPanel()">CUSTOM SVG</div>
+        </div>
+      </div>
+
+      <!-- Custom SVG input panel -->
+      <div id="custom-svg-panel" style="display:none; margin-bottom:10px;">
+        <div style="font-size:8px; color:#555; letter-spacing:0.1em; margin-bottom:5px; text-transform:uppercase;">Paste SVG path or full SVG code:</div>
+        <textarea id="p-customSVG" style="width:100%; height:90px; background:#060606; border:1px solid #2a2a2a; color:#aaa; font-family:'IBM Plex Mono',monospace; font-size:8px; padding:6px; resize:vertical; outline:none; line-height:1.4;" placeholder="<svg viewBox='-100 -100 200 200'>&#10;  <path d='M 0 -70 C 40 -40 40 20 0 70 C -40 20 -40 -40 0 -70 Z'/>&#10;</svg>&#10;&#10;— or just a path d=&quot;...&quot; value —" oninput="parseCustomSVG();scheduleRender()"></textarea>
+        <div id="svg-parse-status" style="font-size:8px; margin-top:4px; color:#555; letter-spacing:0.08em;"></div>
+        <button class="action-btn" onclick="applyDefaultSVG()" style="margin-top:4px; font-size:8px;">LOAD DEFAULT PETAL</button>
+      </div>
+
+      <!-- Built-in parametric controls -->
+      <div id="builtin-petal-panel">
+        <div class="param-row">
+          <span class="param-label">WIDTH</span>
+          <input type="range" id="p-petalWidth" min="10" max="100" value="65" step="1" oninput="syncVal(this,'v-petalWidth');scheduleRender()">
+          <span class="param-value" id="v-petalWidth">65%</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">HEIGHT</span>
+          <input type="range" id="p-petalHeight" min="20" max="120" value="80" step="1" oninput="syncVal(this,'v-petalHeight');scheduleRender()">
+          <span class="param-value" id="v-petalHeight">80%</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">TAPER</span>
+          <input type="range" id="p-taper" min="0" max="100" value="20" step="1" oninput="syncVal(this,'v-taper');scheduleRender()">
+          <span class="param-value" id="v-taper">20%</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">CURVATURE</span>
+          <input type="range" id="p-curvature" min="0" max="100" value="60" step="1" oninput="syncVal(this,'v-curvature');scheduleRender()">
+          <span class="param-value" id="v-curvature">60%</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">ROUNDNESS</span>
+          <input type="range" id="p-roundness" min="0" max="100" value="40" step="1" oninput="syncVal(this,'v-roundness');scheduleRender()">
+          <span class="param-value" id="v-roundness">40%</span>
+        </div>
+        <div class="param-row">
+          <span class="param-label">SYMMETRY</span>
+          <div class="seg-control" style="flex:1;">
+            <div class="seg-btn active" data-param="petalSym" data-val="bilateral" onclick="setSeg(this,'petalSym')">BILAT</div>
+            <div class="seg-btn" data-param="petalSym" data-val="asym" onclick="setSeg(this,'petalSym')">ASYM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shared controls (apply to both modes) -->
+      <div class="param-row" style="margin-top:4px;">
+        <span class="param-label">MODE</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="petalMode" data-val="fill" onclick="setSeg(this,'petalMode')">FILL</div>
+          <div class="seg-btn" data-param="petalMode" data-val="stroke" onclick="setSeg(this,'petalMode')">STROKE</div>
+          <div class="seg-btn" data-param="petalMode" data-val="hollow" onclick="setSeg(this,'petalMode')">HOLLOW</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">STROKE W</span>
+        <input type="range" id="p-strokeW" min="0.5" max="8" value="1.5" step="0.5" oninput="syncVal(this,'v-strokeW');scheduleRender()">
+        <span class="param-value" id="v-strokeW">1.5</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">STK ALIGN</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="strokeAlign" data-val="center" onclick="setSeg(this,'strokeAlign')">CTR</div>
+          <div class="seg-btn" data-param="strokeAlign" data-val="inside" onclick="setSeg(this,'strokeAlign')">IN</div>
+          <div class="seg-btn" data-param="strokeAlign" data-val="outside" onclick="setSeg(this,'strokeAlign')">OUT</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">SVG SCALE</span>
+        <input type="range" id="p-svgScale" min="20" max="200" value="100" step="1" oninput="syncVal(this,'v-svgScale');scheduleRender()">
+        <span class="param-value" id="v-svgScale">100%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">SVG ROT</span>
+        <input type="range" id="p-svgRot" min="-180" max="180" value="0" step="1" oninput="syncVal(this,'v-svgRot');scheduleRender()">
+        <span class="param-value" id="v-svgRot">0°</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">NEGATIVE</span>
+        <div class="toggle-btn" id="toggle-negative" onclick="toggleParam('negative')">OFF</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="panel-section">
+    <div class="section-header" onclick="toggleSection('center')">
+      <span>CENTER (BINDU)</span><span id="arrow-center">▸</span>
+    </div>
+    <div class="section-content" id="sec-center">
+      <div class="param-row">
+        <span class="param-label">SHAPE</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="centerShape" data-val="circle" onclick="setSeg(this,'centerShape')">◯</div>
+          <div class="seg-btn" data-param="centerShape" data-val="polygon" onclick="setSeg(this,'centerShape')">⬡</div>
+          <div class="seg-btn" data-param="centerShape" data-val="none" onclick="setSeg(this,'centerShape')">∅</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">SIDES</span>
+        <input type="range" id="p-centerSides" min="3" max="12" value="6" step="1" oninput="syncVal(this,'v-centerSides');scheduleRender()">
+        <span class="param-value" id="v-centerSides">6</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">RADIUS</span>
+        <input type="range" id="p-centerRadius" min="1" max="25" value="8" step="0.5" oninput="syncVal(this,'v-centerRadius');scheduleRender()">
+        <span class="param-value" id="v-centerRadius">8%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">ROTATION</span>
+        <input type="range" id="p-centerRot" min="0" max="360" value="0" step="1" oninput="syncVal(this,'v-centerRot');scheduleRender()">
+        <span class="param-value" id="v-centerRot">0°</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">MODE</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="centerMode" data-val="fill" onclick="setSeg(this,'centerMode')">FILL</div>
+          <div class="seg-btn" data-param="centerMode" data-val="stroke" onclick="setSeg(this,'centerMode')">STROKE</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">COLOR</span>
+        <input type="color" id="p-centerColor" value="#e8ff3c" onchange="scheduleRender()">
+      </div>
+    </div>
+  </div>
+
+  <!-- DENSITY -->
+  <div class="panel-section">
+    <div class="section-header" onclick="toggleSection('density')">
+      <span>DENSITY & SPACING</span><span id="arrow-density">▸</span>
+    </div>
+    <div class="section-content" id="sec-density">
+      <div class="param-row">
+        <span class="param-label">PETAL GAP</span>
+        <input type="range" id="p-petalGap" min="0" max="50" value="5" step="1" oninput="syncVal(this,'v-petalGap');scheduleRender()">
+        <span class="param-value" id="v-petalGap">5%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">NEG SPACE</span>
+        <input type="range" id="p-negSpace" min="0" max="80" value="20" step="1" oninput="syncVal(this,'v-negSpace');scheduleRender()">
+        <span class="param-value" id="v-negSpace">20%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">INNER VOID</span>
+        <input type="range" id="p-innerVoid" min="0" max="40" value="5" step="1" oninput="syncVal(this,'v-innerVoid');scheduleRender()">
+        <span class="param-value" id="v-innerVoid">5%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">CLIPPING</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="clipping" data-val="circle" onclick="setSeg(this,'clipping')">CIRC</div>
+          <div class="seg-btn" data-param="clipping" data-val="none" onclick="setSeg(this,'clipping')">NONE</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">OVERLAP</span>
+        <div class="toggle-btn" id="toggle-overlap" onclick="toggleParam('overlap')">OFF</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLOR -->
+  <div class="panel-section">
+    <div class="section-header" onclick="toggleSection('color')">
+      <span>COLOR SYSTEM</span><span id="arrow-color">▸</span>
+    </div>
+    <div class="section-content" id="sec-color">
+      <div class="param-row">
+        <span class="param-label">MODE</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="colorMode" data-val="mono" onclick="setSeg(this,'colorMode')">MONO</div>
+          <div class="seg-btn" data-param="colorMode" data-val="two" onclick="setSeg(this,'colorMode')">2T</div>
+          <div class="seg-btn" data-param="colorMode" data-val="multi" onclick="setSeg(this,'colorMode')">MULTI</div>
+        </div>
+      </div>
+      <div id="layer-colors" style="margin-top:6px;"></div>
+      <div class="param-row" style="margin-top:6px;">
+        <span class="param-label">OPACITY</span>
+        <input type="range" id="p-opacity" min="10" max="100" value="100" step="1" oninput="syncVal(this,'v-opacity');scheduleRender()">
+        <span class="param-value" id="v-opacity">100%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">TONE TONE</span>
+        <div class="toggle-btn" id="toggle-tonetone" onclick="toggleParam('tonetone')">OFF</div>
+        <span class="param-label" style="margin-left:8px;">ALT</span>
+        <div class="toggle-btn" id="toggle-altcolor" onclick="toggleParam('altcolor')">OFF</div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">SEED</span>
+        <input type="number" id="p-seed" value="42" min="1" max="9999" style="width:55px;" onchange="scheduleRender()">
+        <button class="toggle-btn" onclick="randomPalette()" style="width:auto; padding:0 6px; font-size:9px;">GEN</button>
+      </div>
+      <button class="action-btn" id="btn-lock-palette" onclick="toggleLockPalette()" style="margin-top:4px;">🔓 LOCK PALETTE</button>
+    </div>
+  </div>
+
+  <!-- CROP -->
+  <div class="panel-section">
+    <div class="section-header" onclick="toggleSection('crop')">
+      <span>CROP & FRAGMENT</span><span id="arrow-crop">▸</span>
+    </div>
+    <div class="section-content" id="sec-crop">
+      <div class="param-row">
+        <span class="param-label">QUADRANT</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="cropQ" data-val="none" onclick="setSeg(this,'cropQ')">OFF</div>
+          <div class="seg-btn" data-param="cropQ" data-val="tl" onclick="setSeg(this,'cropQ')">TL</div>
+          <div class="seg-btn" data-param="cropQ" data-val="tr" onclick="setSeg(this,'cropQ')">TR</div>
+          <div class="seg-btn" data-param="cropQ" data-val="bl" onclick="setSeg(this,'cropQ')">BL</div>
+          <div class="seg-btn" data-param="cropQ" data-val="br" onclick="setSeg(this,'cropQ')">BR</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">VISIBLE</span>
+        <input type="range" id="p-cropVis" min="10" max="100" value="100" step="1" oninput="syncVal(this,'v-cropVis');scheduleRender()">
+        <span class="param-value" id="v-cropVis">100%</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">MASK</span>
+        <div class="seg-control" style="flex:1;">
+          <div class="seg-btn active" data-param="maskShape" data-val="circle" onclick="setSeg(this,'maskShape')">CIRC</div>
+          <div class="seg-btn" data-param="maskShape" data-val="square" onclick="setSeg(this,'maskShape')">SQ</div>
+        </div>
+      </div>
+      <div class="param-row">
+        <span class="param-label">BLEED</span>
+        <input type="range" id="p-bleed" min="0" max="30" value="0" step="1" oninput="syncVal(this,'v-bleed');scheduleRender()">
+        <span class="param-value" id="v-bleed">0</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CANVAS AREA -->
+<div style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+  <div class="canvas-wrap" id="canvas-wrap">
+    <canvas id="mandala-canvas"></canvas>
+    <canvas id="overlay-canvas" style="position:absolute; pointer-events:none;"></canvas>
+  </div>
+  <div class="status-bar">
+    <span><span class="status-dot"></span></span>
+    <span id="stat-size">800 × 800 px</span>
+    <span>|</span>
+    <span id="stat-divs">8 DIV / 45.0°</span>
+    <span>|</span>
+    <span id="stat-layers">3 LAYERS</span>
+    <span>|</span>
+    <span id="stat-petals">64 PETALS</span>
+    <span style="flex:1;"></span>
+    <span id="stat-mode">FULL RADIAL</span>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+const STATE = {
+  // canvas
+  canvasW: 800, canvasH: 800, canvasShape: 'square', margin: 5,
+  bgColor: '#0a0a0a', transparent: false, minStroke: 0.5,
+
+  // radial
+  divisions: 8, rotOffset: 0,
+  symmetry: 'full', mirror: false, altab: false,
+
+  // layers
+  layerCount: 3,
+  layers: [
+    { radius: 90, thickness: 22, visible: true, color: '#e8ff3c', offset: 0 },
+    { radius: 62, thickness: 20, visible: true, color: '#cccccc', offset: 0 },
+    { radius: 36, thickness: 18, visible: true, color: '#888888', offset: 0 },
+    { radius: 18, thickness: 14, visible: true, color: '#555555', offset: 0 },
+    { radius: 8,  thickness: 10, visible: true, color: '#333333', offset: 0 },
+  ],
+  scaleMode: 'linear', layerGap: 3,
+  activeLayer: 0,
+
+  // petal module
+  moduleSource: 'builtin',   // 'builtin' | 'custom'
+  customSVGPaths: [],        // parsed path data array from custom SVG
+  customSVGViewBox: [-100, -100, 200, 200],  // parsed viewBox
+  svgScale: 100, svgRot: 0,
+
+  // builtin petal
+  petalWidth: 65, petalHeight: 80, taper: 20, curvature: 60,
+  roundness: 40, petalSym: 'bilateral', petalMode: 'fill',
+  strokeW: 1.5, strokeAlign: 'center', negative: false,
+
+  // center
+  centerShape: 'circle', centerSides: 6, centerRadius: 8,
+  centerRot: 0, centerMode: 'fill', centerColor: '#e8ff3c',
+
+  // density
+  petalGap: 5, negSpace: 20, innerVoid: 5,
+  clipping: 'circle', overlap: false,
+
+  // color
+  colorMode: 'mono', opacity: 100, tonetone: false,
+  altcolor: false, seed: 42, paletteLocked: false,
+
+  // crop
+  cropQ: 'none', cropVis: 100, maskShape: 'circle', bleed: 0,
+
+  // ui
+  showGrid: false, showAngles: false, printSim: false,
+};
+
+const HISTORY = [];
+let HISTORY_INDEX = -1;
+let renderTimer = null;
+
+function pushHistory() {
+  const snap = JSON.stringify(STATE);
+  HISTORY.splice(HISTORY_INDEX + 1);
+  HISTORY.push(snap);
+  if (HISTORY.length > 60) HISTORY.shift();
+  HISTORY_INDEX = HISTORY.length - 1;
+}
+
+function undo() {
+  if (HISTORY_INDEX > 0) {
+    HISTORY_INDEX--;
+    Object.assign(STATE, JSON.parse(HISTORY[HISTORY_INDEX]));
+    syncUIFromState();
+    render();
+  }
+}
+
+function redo() {
+  if (HISTORY_INDEX < HISTORY.length - 1) {
+    HISTORY_INDEX++;
+    Object.assign(STATE, JSON.parse(HISTORY[HISTORY_INDEX]));
+    syncUIFromState();
+    render();
+  }
+}
+
+document.getElementById('undo-btn').onclick = undo;
+document.getElementById('redo-btn').onclick = redo;
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) { e.preventDefault(); redo(); }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UI HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleSection(id) {
+  const content = document.getElementById('sec-' + id);
+  const arrow = document.getElementById('arrow-' + id);
+  const header = arrow.parentElement;
+  const open = content.classList.toggle('open');
+  arrow.textContent = open ? '▾' : '▸';
+  header.classList.toggle('active', open);
+}
+
+function syncVal(input, valId) {
+  const el = document.getElementById(valId);
+  if (!el) return;
+  const v = parseFloat(input.value);
+  const id = input.id;
+  if (id === 'p-minStroke') { el.textContent = v.toFixed(1); STATE.minStroke = v; }
+  else if (id === 'p-margin') { el.textContent = v + '%'; STATE.margin = v; }
+  else if (id === 'p-rotOffset') { el.textContent = v + '°'; STATE.rotOffset = v; updateAngleDisplay(); }
+  else if (id === 'p-layerGap') { el.textContent = v + '%'; STATE.layerGap = v; }
+  else if (id === 'p-petalWidth') { el.textContent = v + '%'; STATE.petalWidth = v; }
+  else if (id === 'p-petalHeight') { el.textContent = v + '%'; STATE.petalHeight = v; }
+  else if (id === 'p-taper') { el.textContent = v + '%'; STATE.taper = v; }
+  else if (id === 'p-curvature') { el.textContent = v + '%'; STATE.curvature = v; }
+  else if (id === 'p-roundness') { el.textContent = v + '%'; STATE.roundness = v; }
+  else if (id === 'p-strokeW') { el.textContent = v.toFixed(1); STATE.strokeW = v; }
+  else if (id === 'p-centerSides') { el.textContent = v; STATE.centerSides = v; }
+  else if (id === 'p-centerRadius') { el.textContent = v + '%'; STATE.centerRadius = v; }
+  else if (id === 'p-centerRot') { el.textContent = v + '°'; STATE.centerRot = v; }
+  else if (id === 'p-petalGap') { el.textContent = v + '%'; STATE.petalGap = v; }
+  else if (id === 'p-negSpace') { el.textContent = v + '%'; STATE.negSpace = v; }
+  else if (id === 'p-innerVoid') { el.textContent = v + '%'; STATE.innerVoid = v; }
+  else if (id === 'p-opacity') { el.textContent = v + '%'; STATE.opacity = v; }
+  else if (id === 'p-cropVis') { el.textContent = v + '%'; STATE.cropVis = v; }
+  else if (id === 'p-bleed') { el.textContent = v; STATE.bleed = v; }
+  else if (id === 'p-layerRadius') { el.textContent = v + '%'; STATE.layers[STATE.activeLayer].radius = v; }
+  else if (id === 'p-layerThickness') { el.textContent = v + '%'; STATE.layers[STATE.activeLayer].thickness = v; }
+  else if (id === 'p-svgScale') { el.textContent = v + '%'; STATE.svgScale = v; }
+  else if (id === 'p-svgRot') { el.textContent = v + '°'; STATE.svgRot = v; }
+  else if (id === 'p-divisions') {
+    el.textContent = v; STATE.divisions = v;
+    updateAngleDisplay();
+    updateDivisionsSlider();
+  }
+}
+
+function updateAngleDisplay() {
+  const angle = (360 / STATE.divisions).toFixed(1);
+  document.getElementById('v-angle').textContent = angle + '°';
+  document.getElementById('stat-divs').textContent = STATE.divisions + ' DIV / ' + angle + '°';
+}
+
+function updateDivisionsSlider() {
+  document.getElementById('v-divisions').textContent = STATE.divisions;
+}
+
+function setSeg(el, param) {
+  const val = el.dataset.val;
+  document.querySelectorAll(`.seg-btn[data-param="${param}"]`).forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  STATE[param] = val;
+  scheduleRender();
+}
+
+function toggleParam(param) {
+  STATE[param] = !STATE[param];
+  const btn = document.getElementById('toggle-' + param);
+  if (btn) {
+    btn.textContent = STATE[param] ? 'ON' : 'OFF';
+    btn.classList.toggle('on', STATE[param]);
+  }
+  scheduleRender();
+}
+
+function toggleGrid() {
+  STATE.showGrid = !STATE.showGrid;
+  document.getElementById('btn-grid').classList.toggle('active', STATE.showGrid);
+  renderOverlay();
+}
+
+function toggleAngles() {
+  STATE.showAngles = !STATE.showAngles;
+  document.getElementById('btn-angles').classList.toggle('active', STATE.showAngles);
+  renderOverlay();
+}
+
+function togglePrintSim() {
+  STATE.printSim = !STATE.printSim;
+  document.getElementById('btn-print-sim').classList.toggle('active', STATE.printSim);
+  scheduleRender();
+}
+
+function toggleLockPalette() {
+  STATE.paletteLocked = !STATE.paletteLocked;
+  const btn = document.getElementById('btn-lock-palette');
+  btn.textContent = STATE.paletteLocked ? '🔒 PALETTE LOCKED' : '🔓 LOCK PALETTE';
+}
+
+function scheduleRender() {
+  if (renderTimer) clearTimeout(renderTimer);
+  renderTimer = setTimeout(() => { pushHistory(); render(); }, 16);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LAYER SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+function syncLayerCount(input) {
+  const v = parseInt(input.value);
+  document.getElementById('v-layerCount').textContent = v;
+  STATE.layerCount = v;
+  if (STATE.activeLayer >= v) STATE.activeLayer = v - 1;
+  renderLayerChips();
+  renderLayerColors();
+}
+
+function renderLayerChips() {
+  const el = document.getElementById('layer-chips');
+  el.innerHTML = '';
+  for (let i = 0; i < STATE.layerCount; i++) {
+    const chip = document.createElement('div');
+    chip.className = 'layer-chip' + (i === STATE.activeLayer ? ' active' : '');
+    chip.innerHTML = `<span class="vis-dot"></span>L${i + 1}`;
+    chip.onclick = () => selectLayer(i);
+    const dot = chip.querySelector('.vis-dot');
+    dot.onclick = (e) => { e.stopPropagation(); STATE.layers[i].visible = !STATE.layers[i].visible; renderLayerChips(); scheduleRender(); };
+    if (!STATE.layers[i].visible) { chip.style.opacity = '0.3'; }
+    el.appendChild(chip);
+  }
+  updateLayerControls();
+  document.getElementById('stat-layers').textContent = STATE.layerCount + ' LAYERS';
+}
+
+function selectLayer(i) {
+  STATE.activeLayer = i;
+  renderLayerChips();
+  updateLayerControls();
+}
+
+function updateLayerControls() {
+  const l = STATE.layers[STATE.activeLayer];
+  const rSlider = document.getElementById('p-layerRadius');
+  const tSlider = document.getElementById('p-layerThickness');
+  const oSlider = document.getElementById('p-layerOffset');
+  if (rSlider) { rSlider.value = l.radius; document.getElementById('v-layerRadius').textContent = l.radius + '%'; }
+  if (tSlider) { tSlider.value = l.thickness; document.getElementById('v-layerThickness').textContent = l.thickness + '%'; }
+  if (oSlider) { oSlider.value = l.offset || 0; document.getElementById('v-layerOffset').textContent = (l.offset || 0) + '°'; }
+}
+
+function syncLayerProp(prop, val) {
+  const v = parseFloat(val);
+  STATE.layers[STATE.activeLayer][prop] = v;
+  if (prop === 'radius') document.getElementById('v-layerRadius').textContent = val + '%';
+  if (prop === 'thickness') document.getElementById('v-layerThickness').textContent = val + '%';
+  if (prop === 'offset') document.getElementById('v-layerOffset').textContent = val + '°';
+}
+
+function renderLayerColors() {
+  const el = document.getElementById('layer-colors');
+  el.innerHTML = '';
+  for (let i = 0; i < STATE.layerCount; i++) {
+    const row = document.createElement('div');
+    row.className = 'param-row';
+    row.innerHTML = `
+      <span class="param-label">L${i+1} COLOR</span>
+      <input type="color" value="${STATE.layers[i].color}" onchange="STATE.layers[${i}].color=this.value; scheduleRender();">
+    `;
+    el.appendChild(row);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RANDOM PALETTE
+// ─────────────────────────────────────────────────────────────────────────────
+function seededRandom(seed) {
+  let s = seed;
+  return () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 4294967296; };
+}
+
+function randomPalette() {
+  if (STATE.paletteLocked) return;
+  const seed = parseInt(document.getElementById('p-seed').value) || 42;
+  const rng = seededRandom(seed + Date.now() % 1000);
+  const hue = Math.floor(rng() * 360);
+  for (let i = 0; i < STATE.layers.length; i++) {
+    const l = 30 + Math.floor(rng() * 50);
+    STATE.layers[i].color = hslToHex(hue, 60, l);
+  }
+  STATE.centerColor = hslToHex((hue + 60) % 360, 80, 70);
+  document.getElementById('p-centerColor').value = STATE.centerColor;
+  renderLayerColors();
+  scheduleRender();
+}
+
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  const a = s * Math.min(l, 1 - l);
+  const f = n => { const k = (n + h / 30) % 12; return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); };
+  const toHex = x => Math.round(x * 255).toString(16).padStart(2, '0');
+  return '#' + toHex(f(0)) + toHex(f(8)) + toHex(f(4));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CANVAS & RENDER
+// ─────────────────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('mandala-canvas');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay-canvas');
+const octx = overlay.getContext('2d');
+
+function getCanvasDisplaySize() {
+  const wrap = document.getElementById('canvas-wrap');
+  const W = wrap.clientWidth - 40;
+  const H = wrap.clientHeight - 40;
+  const scaleX = W / STATE.canvasW;
+  const scaleY = H / STATE.canvasH;
+  const scale = Math.min(scaleX, scaleY, 1);
+  return { dw: STATE.canvasW * scale, dh: STATE.canvasH * scale, scale };
+}
+
+function resizeCanvas() {
+  canvas.width = STATE.canvasW;
+  canvas.height = STATE.canvasH;
+  const { dw, dh } = getCanvasDisplaySize();
+  canvas.style.width = dw + 'px';
+  canvas.style.height = dh + 'px';
+  overlay.width = dw * devicePixelRatio;
+  overlay.height = dh * devicePixelRatio;
+  overlay.style.width = dw + 'px';
+  overlay.style.height = dh + 'px';
+  octx.scale(devicePixelRatio, devicePixelRatio);
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function toneVariant(hex, lighter) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const d = lighter ? 60 : -60;
+  const clamp = v => Math.max(0, Math.min(255, v));
+  return `rgb(${clamp(r + d)},${clamp(g + d)},${clamp(b + d)})`;
+}
+
+function computeLayerRadii() {
+  const size = Math.min(STATE.canvasW, STATE.canvasH);
+  const marginPx = size * STATE.margin / 100;
+  const maxR = (size / 2) - marginPx;
+  const voidR = maxR * STATE.innerVoid / 100;
+
+  const radii = [];
+  if (STATE.scaleMode === 'linear') {
+    for (let i = 0; i < STATE.layerCount; i++) {
+      const frac = STATE.layers[i].radius / 100;
+      radii.push({ outer: voidR + (maxR - voidR) * frac, inner: voidR });
+    }
+  } else if (STATE.scaleMode === 'exp') {
+    for (let i = 0; i < STATE.layerCount; i++) {
+      const t = i / Math.max(STATE.layerCount - 1, 1);
+      const frac = Math.pow(t + 0.1, 1.5) / Math.pow(1.1, 1.5);
+      const r = voidR + (maxR - voidR) * (0.15 + frac * 0.85);
+      radii.push({ outer: r, inner: voidR });
+    }
+  } else {
+    for (let i = 0; i < STATE.layerCount; i++) {
+      const frac = STATE.layers[i].radius / 100;
+      radii.push({ outer: voidR + (maxR - voidR) * frac, inner: voidR });
+    }
+  }
+  return radii;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SVG MODULE SYSTEM — direct canvas path rendering (no image/blob)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const DEFAULT_PETAL_SVG = `<svg width="200" height="200" viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 0 -70 C 40 -40 40 20 0 70 C -40 20 -40 -40 0 -70 Z" fill="#E5C48A"/>
+</svg>`;
+
+// Parsed module: { viewBox:[x,y,w,h], shapes:[{type,d,fill,stroke,strokeWidth}] }
+let svgModule = null;
+
+function applyDefaultSVG() {
+  const ta = document.getElementById('p-customSVG');
+  ta.value = DEFAULT_PETAL_SVG;
+  parseCustomSVG();
+}
+
+function toggleCustomSVGPanel() {
+  const isCustom = STATE.moduleSource === 'custom';
+  document.getElementById('custom-svg-panel').style.display = isCustom ? 'block' : 'none';
+  document.getElementById('builtin-petal-panel').style.display = isCustom ? 'none' : 'block';
+  if (isCustom && !document.getElementById('p-customSVG').value.trim()) {
+    applyDefaultSVG();
+  }
+}
+
+function parseCustomSVG() {
+  const raw = document.getElementById('p-customSVG').value.trim();
+  const statusEl = document.getElementById('svg-parse-status');
+  if (!raw) { svgModule = null; statusEl.textContent = ''; scheduleRender(); return; }
+
+  try {
+    let svgText = raw;
+    if (!raw.includes('<')) {
+      // bare path d string
+      svgText = `<svg viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg"><path d="${raw}" fill="white"/></svg>`;
+    } else if (!raw.includes('<svg')) {
+      svgText = `<svg viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg">${raw}</svg>`;
+    }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgText, 'image/svg+xml');
+    const parseErr = doc.querySelector('parsererror');
+    if (parseErr) { statusEl.textContent = '✗ XML parse error'; statusEl.style.color = '#ff4444'; return; }
+
+    const svgEl = doc.querySelector('svg');
+    if (!svgEl) { statusEl.textContent = '✗ No <svg> element'; statusEl.style.color = '#ff4444'; return; }
+
+    // ViewBox
+    const vbAttr = svgEl.getAttribute('viewBox');
+    let viewBox = [-100, -100, 200, 200];
+    if (vbAttr) {
+      const parts = vbAttr.trim().split(/[\s,]+/).map(Number);
+      if (parts.length === 4 && parts.every(n => !isNaN(n))) viewBox = parts;
+    }
+
+    // Collect all drawable shapes
+    const els = Array.from(svgEl.querySelectorAll('path, circle, rect, ellipse, polygon, polyline, line'));
+    if (els.length === 0) { statusEl.textContent = '✗ No drawable shapes found'; statusEl.style.color = '#ff4444'; return; }
+
+    const shapes = els.map(el => {
+      const tag = el.tagName.toLowerCase();
+      // Convert every shape to a path d string for uniform handling
+      let d = '';
+      if (tag === 'path') {
+        d = el.getAttribute('d') || '';
+      } else if (tag === 'circle') {
+        const cx = +el.getAttribute('cx')||0, cy = +el.getAttribute('cy')||0, r = +el.getAttribute('r')||0;
+        d = circleToPath(cx, cy, r);
+      } else if (tag === 'rect') {
+        const x=+el.getAttribute('x')||0, y=+el.getAttribute('y')||0;
+        const w=+el.getAttribute('width')||0, h=+el.getAttribute('height')||0;
+        const rx=+el.getAttribute('rx')||0;
+        d = rectToPath(x, y, w, h, rx);
+      } else if (tag === 'ellipse') {
+        const cx=+el.getAttribute('cx')||0, cy=+el.getAttribute('cy')||0;
+        const rx=+el.getAttribute('rx')||0, ry=+el.getAttribute('ry')||0;
+        d = ellipseToPath(cx, cy, rx, ry);
+      } else if (tag === 'polygon' || tag === 'polyline') {
+        const pts = el.getAttribute('points') || '';
+        d = pointsToPath(pts, tag === 'polygon');
+      } else if (tag === 'line') {
+        const x1=+el.getAttribute('x1')||0, y1=+el.getAttribute('y1')||0;
+        const x2=+el.getAttribute('x2')||0, y2=+el.getAttribute('y2')||0;
+        d = `M${x1},${y1} L${x2},${y2}`;
+      }
+      return {
+        d,
+        originalFill: el.getAttribute('fill'),
+        originalStroke: el.getAttribute('stroke'),
+        strokeWidth: parseFloat(el.getAttribute('stroke-width')) || 1,
+      };
+    }).filter(s => s.d);
+
+    if (shapes.length === 0) { statusEl.textContent = '✗ Could not extract paths'; statusEl.style.color = '#ff4444'; return; }
+
+    svgModule = { viewBox, shapes };
+    statusEl.textContent = `✓ ${shapes.length} shape${shapes.length > 1 ? 's' : ''} — ready`;
+    statusEl.style.color = '#55cc55';
+
+  } catch(e) {
+    statusEl.textContent = '✗ Error: ' + e.message;
+    statusEl.style.color = '#ff4444';
+    svgModule = null;
+  }
+
+  scheduleRender();
+}
+
+// ── Shape → path d converters ──
+function circleToPath(cx, cy, r) {
+  return `M${cx-r},${cy} A${r},${r},0,1,0,${cx+r},${cy} A${r},${r},0,1,0,${cx-r},${cy} Z`;
+}
+function ellipseToPath(cx, cy, rx, ry) {
+  return `M${cx-rx},${cy} A${rx},${ry},0,1,0,${cx+rx},${cy} A${rx},${ry},0,1,0,${cx-rx},${cy} Z`;
+}
+function rectToPath(x, y, w, h, r) {
+  if (!r) return `M${x},${y} H${x+w} V${y+h} H${x} Z`;
+  return `M${x+r},${y} H${x+w-r} Q${x+w},${y} ${x+w},${y+r} V${y+h-r} Q${x+w},${y+h} ${x+w-r},${y+h} H${x+r} Q${x},${y+h} ${x},${y+h-r} V${y+r} Q${x},${y} ${x+r},${y} Z`;
+}
+function pointsToPath(pts, close) {
+  const coords = pts.trim().split(/[\s,]+/).map(Number);
+  if (coords.length < 4) return '';
+  let d = `M${coords[0]},${coords[1]}`;
+  for (let i = 2; i < coords.length; i += 2) d += ` L${coords[i]},${coords[i+1]}`;
+  if (close) d += ' Z';
+  return d;
+}
+
+// ── Full SVG path d parser → Canvas 2D ──
+// Implements: M,m,L,l,H,h,V,v,C,c,S,s,Q,q,T,t,A,a,Z
+function svgPathToCanvas(ctx, d) {
+  if (!d) return;
+  // Tokenize: split on commands, keeping command letters
+  const tokens = d.trim().match(/[MmLlHhVvCcSsQqTtAaZz]|[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?/g);
+  if (!tokens) return;
+
+  let x = 0, y = 0, startX = 0, startY = 0;
+  let lastCmd = 'L', lastCX = 0, lastCY = 0;
+  let i = 0;
+  const num = () => parseFloat(tokens[i++]);
+  const flag = () => parseFloat(tokens[i++]);
+
+  ctx.beginPath();
+
+  while (i < tokens.length) {
+    let cmd;
+    if (/^[MmLlHhVvCcSsQqTtAaZz]$/.test(tokens[i])) {
+      cmd = tokens[i++]; // consume the command letter
+      lastCmd = (cmd === 'M') ? 'L' : (cmd === 'm') ? 'l' : cmd;
+    } else {
+      cmd = lastCmd; // implicit repeat — don't advance i
+    }
+
+    if (cmd === 'M') { x=num(); y=num(); ctx.moveTo(x,y); startX=x; startY=y; }
+    else if (cmd === 'm') { x+=num(); y+=num(); ctx.moveTo(x,y); startX=x; startY=y; }
+    else if (cmd === 'L') { x=num(); y=num(); ctx.lineTo(x,y); }
+    else if (cmd === 'l') { x+=num(); y+=num(); ctx.lineTo(x,y); }
+    else if (cmd === 'H') { x=num(); ctx.lineTo(x,y); }
+    else if (cmd === 'h') { x+=num(); ctx.lineTo(x,y); }
+    else if (cmd === 'V') { y=num(); ctx.lineTo(x,y); }
+    else if (cmd === 'v') { y+=num(); ctx.lineTo(x,y); }
+    else if (cmd === 'C') {
+      const x1=num(),y1=num(),x2=num(),y2=num(),ex=num(),ey=num();
+      ctx.bezierCurveTo(x1,y1,x2,y2,ex,ey); lastCX=x2; lastCY=y2; x=ex; y=ey;
+    }
+    else if (cmd === 'c') {
+      const x1=x+num(),y1=y+num(),x2=x+num(),y2=y+num(),ex=x+num(),ey=y+num();
+      ctx.bezierCurveTo(x1,y1,x2,y2,ex,ey); lastCX=x2; lastCY=y2; x=ex; y=ey;
+    }
+    else if (cmd === 'S') {
+      const x1=2*x-lastCX,y1=2*y-lastCY,x2=num(),y2=num(),ex=num(),ey=num();
+      ctx.bezierCurveTo(x1,y1,x2,y2,ex,ey); lastCX=x2; lastCY=y2; x=ex; y=ey;
+    }
+    else if (cmd === 's') {
+      const x1=2*x-lastCX,y1=2*y-lastCY,x2=x+num(),y2=y+num(),ex=x+num(),ey=y+num();
+      ctx.bezierCurveTo(x1,y1,x2,y2,ex,ey); lastCX=x2; lastCY=y2; x=ex; y=ey;
+    }
+    else if (cmd === 'Q') {
+      const x1=num(),y1=num(),ex=num(),ey=num();
+      ctx.quadraticCurveTo(x1,y1,ex,ey); lastCX=x1; lastCY=y1; x=ex; y=ey;
+    }
+    else if (cmd === 'q') {
+      const x1=x+num(),y1=y+num(),ex=x+num(),ey=y+num();
+      ctx.quadraticCurveTo(x1,y1,ex,ey); lastCX=x1; lastCY=y1; x=ex; y=ey;
+    }
+    else if (cmd === 'T') {
+      const x1=2*x-lastCX,y1=2*y-lastCY,ex=num(),ey=num();
+      ctx.quadraticCurveTo(x1,y1,ex,ey); lastCX=x1; lastCY=y1; x=ex; y=ey;
+    }
+    else if (cmd === 't') {
+      const x1=2*x-lastCX,y1=2*y-lastCY,ex=x+num(),ey=y+num();
+      ctx.quadraticCurveTo(x1,y1,ex,ey); lastCX=x1; lastCY=y1; x=ex; y=ey;
+    }
+    else if (cmd === 'A' || cmd === 'a') {
+      const rel = cmd === 'a';
+      const rx=num(), ry=num(), xRot=num(), largeArc=flag(), sweep=flag();
+      let ex=num(), ey=num();
+      if (rel) { ex+=x; ey+=y; }
+      arcToCanvas(ctx, x, y, ex, ey, rx, ry, xRot*Math.PI/180, largeArc, sweep);
+      x=ex; y=ey;
+    }
+    else if (cmd === 'Z' || cmd === 'z') { ctx.closePath(); x=startX; y=startY; }
+    else { i++; } // skip unknown/stale — safety advance
+  }
+}
+
+// Arc helper — converts SVG arc to canvas arc via endpoint → center parameterization
+function arcToCanvas(ctx, x1, y1, x2, y2, rx, ry, phi, largeArc, sweep) {
+  if (rx === 0 || ry === 0) { ctx.lineTo(x2, y2); return; }
+  rx = Math.abs(rx); ry = Math.abs(ry);
+  const cos = Math.cos(phi), sin = Math.sin(phi);
+  const dx = (x1-x2)/2, dy = (y1-y2)/2;
+  const x1p = cos*dx + sin*dy, y1p = -sin*dx + cos*dy;
+  let n = rx*rx*ry*ry - rx*rx*y1p*y1p - ry*ry*x1p*x1p;
+  let d = rx*rx*y1p*y1p + ry*ry*x1p*x1p;
+  if (d === 0) { ctx.lineTo(x2,y2); return; }
+  let sq = Math.sqrt(Math.max(0, n/d));
+  if (largeArc === sweep) sq = -sq;
+  const cxp = sq*rx*y1p/ry, cyp = -sq*ry*x1p/rx;
+  const cx = cos*cxp - sin*cyp + (x1+x2)/2;
+  const cy = sin*cxp + cos*cyp + (y1+y2)/2;
+  const ang1 = Math.atan2((y1p-cyp)/ry, (x1p-cxp)/rx);
+  let dAng = Math.atan2((-y1p-cyp)/ry, (-x1p-cxp)/rx) - ang1;
+  if (!sweep && dAng > 0) dAng -= 2*Math.PI;
+  if (sweep && dAng < 0) dAng += 2*Math.PI;
+  // Draw using ellipse if available, otherwise approximate
+  if (ctx.ellipse) {
+    ctx.ellipse(cx, cy, rx, ry, phi, ang1, ang1+dAng, !sweep);
+  } else {
+    const steps = Math.max(8, Math.ceil(Math.abs(dAng) * Math.max(rx,ry) / 4));
+    for (let i = 1; i <= steps; i++) {
+      const a = ang1 + dAng * i / steps;
+      const px = cx + rx*Math.cos(a)*cos - ry*Math.sin(a)*sin;
+      const py = cy + rx*Math.cos(a)*sin + ry*Math.sin(a)*cos;
+      ctx.lineTo(px, py);
+    }
+  }
+}
+
+// ── Draw one SVG module instance into the mandala ──
+function drawSVGModule(ctx, cx, cy, angle, outerR, innerR, color, opacity, mode, strokeW) {
+  if (!svgModule || !svgModule.shapes.length) return;
+
+  const vb = svgModule.viewBox; // [minX, minY, width, height]
+  const vbW = vb[2], vbH = vb[3];
+  const vbMinX = vb[0], vbMinY = vb[1];
+
+  const radialSpan = outerR - innerR;
+  const centerR = (innerR + outerR) / 2;
+
+  // Scale to fit the SVG into the radial band slot
+  const scaleBase = radialSpan / vbH;
+  const scale = scaleBase * (STATE.svgScale / 100);
+
+  const svgRotRad = STATE.svgRot * Math.PI / 180;
+
+  ctx.save();
+  ctx.globalAlpha = opacity / 100;
+
+  // Move to position along the radial spoke
+  ctx.translate(cx + centerR * Math.cos(angle), cy + centerR * Math.sin(angle));
+  // Rotate to point outward + user rotation offset
+  ctx.rotate(angle + Math.PI / 2 + svgRotRad);
+  // Scale uniformly
+  ctx.scale(scale, scale);
+  // Center the SVG viewBox on the origin
+  ctx.translate(-(vbMinX + vbW / 2), -(vbMinY + vbH / 2));
+
+  // Draw each shape
+  for (const shape of svgModule.shapes) {
+    ctx.save();
+    svgPathToCanvas(ctx, shape.d);
+
+    if (mode === 'stroke') {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(strokeW, STATE.minStroke) / scale;
+      ctx.stroke();
+    } else if (mode === 'hollow') {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(strokeW, STATE.minStroke) / scale;
+      ctx.stroke();
+    } else {
+      // fill mode — use layer color, respecting original "none" fills
+      const origFill = shape.originalFill;
+      if (origFill === 'none') {
+        // stroke only if original was stroke-only
+        if (shape.originalStroke && shape.originalStroke !== 'none') {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = shape.strokeWidth / scale;
+          ctx.stroke();
+        }
+      } else {
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
+
+// Draw a petal shape using bezier curves (DEFAULT SVG petal = vesica/leaf shape from user's SVG)
+// The default shape is: M 0 -70 C 40 -40 40 20 0 70 C -40 20 -40 -40 0 -70 Z
+// We replicate this geometry but scale it to fit the radial layer slot
+function drawPetal(ctx, cx, cy, angle, outerR, innerR, divAngle, opts) {
+  const {
+    widthPct, heightPct, taper, curvature, roundness, bilateral, mode,
+    strokeW, color, strokeAlign, opacity, altColor, tonetone, petalGap
+  } = opts;
+
+  const halfAngle = (divAngle * widthPct / 100) / 2;
+  const gapAngle = (divAngle * petalGap / 100) / 2;
+  const effectHalfAngle = halfAngle - gapAngle;
+  if (effectHalfAngle <= 0) return;
+
+  const radialSpan = (outerR - innerR);
+  const height = radialSpan * heightPct / 100;
+  const baseR = innerR + (radialSpan - height) / 2;
+  const tipR = Math.min(baseR + height, outerR);
+
+  const tipHalfAngle = effectHalfAngle * (1 - taper / 100);
+  const curve = curvature / 100;
+
+  function toXY(r, a) {
+    return [cx + r * Math.cos(a + angle), cy + r * Math.sin(a + angle)];
+  }
+
+  const tipA = bilateral ? 0 : effectHalfAngle * 0.1;
+
+  const leftBase  = toXY(baseR, -effectHalfAngle);
+  const rightBase = toXY(baseR, effectHalfAngle);
+  const leftTip   = toXY(tipR, -tipHalfAngle + tipA);
+  const rightTip  = toXY(tipR,  tipHalfAngle + tipA);
+
+  // ── Default petal geometry: the "vesica / leaf" from the provided SVG ──
+  // Original SVG: viewBox -100 -100 200 200
+  // Path: M 0 -70  C 40 -40 40 20 0 70  C -40 20 -40 -40 0 -70 Z
+  // This creates a symmetric leaf pointing "up" (toward -Y).
+  // We map it into the radial slot by rotating and scaling the control handles
+  // to match the angular width and radial depth of the layer slot.
+
+  const ctrlOut = curve * height * 0.6;
+  const ctrlLat = effectHalfAngle * curve;
+
+  // Left curve: base → tip (left side of leaf)
+  const lcp1 = toXY(baseR + height * 0.25 + ctrlOut, -effectHalfAngle + ctrlLat * 0.2);
+  const lcp2 = toXY(tipR  - height * 0.15, -tipHalfAngle - ctrlLat * 0.15);
+  // Right curve: tip → base (right side of leaf)
+  const rcp1 = toXY(tipR  - height * 0.15, tipHalfAngle  + ctrlLat * 0.15);
+  const rcp2 = toXY(baseR + height * 0.25 + ctrlOut, effectHalfAngle  - ctrlLat * 0.2);
+  // Tip cap
+  const tcp1 = toXY(tipR + roundness * height / 350, -tipHalfAngle * 0.4);
+  const tcp2 = toXY(tipR + roundness * height / 350,  tipHalfAngle * 0.4);
+  // Base cap
+  const bcp1 = toXY(baseR - roundness * height / 500,  effectHalfAngle * 0.35);
+  const bcp2 = toXY(baseR - roundness * height / 500, -effectHalfAngle * 0.35);
+
+  ctx.save();
+  ctx.globalAlpha = opacity / 100;
+
+  let fillColor = color;
+  let strokeColor = color;
+  if (tonetone) strokeColor = toneVariant(color, true);
+
+  ctx.beginPath();
+  ctx.moveTo(leftBase[0], leftBase[1]);
+  ctx.bezierCurveTo(lcp1[0], lcp1[1], lcp2[0], lcp2[1], leftTip[0], leftTip[1]);
+  ctx.bezierCurveTo(tcp1[0], tcp1[1], tcp2[0], tcp2[1], rightTip[0], rightTip[1]);
+  ctx.bezierCurveTo(rcp1[0], rcp1[1], rcp2[0], rcp2[1], rightBase[0], rightBase[1]);
+  ctx.bezierCurveTo(bcp1[0], bcp1[1], bcp2[0], bcp2[1], leftBase[0], leftBase[1]);
+  ctx.closePath();
+
+  if (mode === 'fill') {
+    ctx.fillStyle = fillColor; ctx.fill();
+  } else if (mode === 'hollow') {
+    ctx.fillStyle = STATE.transparent ? 'rgba(0,0,0,0)' : STATE.bgColor; ctx.fill();
+    ctx.strokeStyle = strokeColor; ctx.lineWidth = Math.max(strokeW, STATE.minStroke); ctx.stroke();
+  } else if (mode === 'stroke') {
+    ctx.strokeStyle = strokeColor; ctx.lineWidth = Math.max(strokeW, STATE.minStroke); ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function drawCenter(ctx, cx, cy) {
+  if (STATE.centerShape === 'none') return;
+  const size = Math.min(STATE.canvasW, STATE.canvasH);
+  const r = size / 2 * STATE.centerRadius / 100;
+  const col = STATE.centerColor;
+
+  ctx.save();
+  ctx.globalAlpha = STATE.opacity / 100;
+  ctx.beginPath();
+
+  if (STATE.centerShape === 'circle') {
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  } else {
+    const sides = STATE.centerSides;
+    const rotRad = STATE.centerRot * Math.PI / 180;
+    ctx.moveTo(cx + r * Math.cos(rotRad), cy + r * Math.sin(rotRad));
+    for (let i = 1; i <= sides; i++) {
+      const a = rotRad + (i * 2 * Math.PI / sides);
+      ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+    }
+    ctx.closePath();
+  }
+
+  if (STATE.centerMode === 'fill') {
+    ctx.fillStyle = col;
+    ctx.fill();
+  } else {
+    ctx.strokeStyle = col;
+    ctx.lineWidth = Math.max(STATE.strokeW, STATE.minStroke);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function render() {
+  resizeCanvas();
+  STATE.canvasW = parseInt(document.getElementById('p-canvasW').value) || 800;
+  STATE.canvasH = parseInt(document.getElementById('p-canvasH').value) || 800;
+  canvas.width = STATE.canvasW;
+  canvas.height = STATE.canvasH;
+  const { dw, dh } = getCanvasDisplaySize();
+  canvas.style.width = dw + 'px';
+  canvas.style.height = dh + 'px';
+
+  const W = STATE.canvasW, H = STATE.canvasH;
+  const cx = W / 2, cy = H / 2;
+
+  // Background
+  ctx.clearRect(0, 0, W, H);
+  if (!STATE.transparent) {
+    ctx.fillStyle = STATE.bgColor;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Clipping path
+  if (STATE.clipping === 'circle' || STATE.canvasShape === 'circle') {
+    ctx.save();
+    ctx.beginPath();
+    const clipR = Math.min(W, H) / 2 - Math.min(W, H) * STATE.margin / 100;
+    ctx.arc(cx, cy, clipR, 0, Math.PI * 2);
+    ctx.clip();
+  }
+
+  // Crop quadrant
+  let cropClip = false;
+  if (STATE.cropQ !== 'none') {
+    const vis = STATE.cropVis / 100;
+    const half = Math.min(W, H) / 2 * vis;
+    let qx = cx, qy = cy;
+    if (STATE.cropQ === 'tl') { ctx.save(); ctx.beginPath(); ctx.rect(cx - half, cy - half, half, half); ctx.clip(); cropClip = true; }
+    if (STATE.cropQ === 'tr') { ctx.save(); ctx.beginPath(); ctx.rect(cx, cy - half, half, half); ctx.clip(); cropClip = true; }
+    if (STATE.cropQ === 'bl') { ctx.save(); ctx.beginPath(); ctx.rect(cx - half, cy, half, half); ctx.clip(); cropClip = true; }
+    if (STATE.cropQ === 'br') { ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, half, half); ctx.clip(); cropClip = true; }
+  }
+
+  const layerRadii = computeLayerRadii();
+  const divAngle = (2 * Math.PI) / STATE.divisions;
+  const symCount = STATE.symmetry === 'full' ? STATE.divisions :
+                   STATE.symmetry === 'half' ? Math.floor(STATE.divisions / 2) :
+                   Math.floor(STATE.divisions / 4);
+
+  const rotOffsetRad = STATE.rotOffset * Math.PI / 180;
+
+  let totalPetals = 0;
+
+  // Render layers (back to front)
+  for (let li = STATE.layerCount - 1; li >= 0; li--) {
+    const layer = STATE.layers[li];
+    if (!layer.visible) continue;
+
+    const lr = layerRadii[li];
+    const outerR = lr.outer;
+    const innerR = lr.inner + (outerR - lr.inner) * (1 - layer.thickness / 100) / 2;
+
+    // Per-layer pattern offset in radians
+    const layerOffsetRad = ((layer.offset || 0) * Math.PI / 180);
+
+    // Color determination
+    let baseColor = layer.color;
+    if (STATE.colorMode === 'mono') baseColor = STATE.layers[0].color;
+    if (STATE.colorMode === 'two') baseColor = li % 2 === 0 ? STATE.layers[0].color : STATE.layers[1].color;
+
+    const useCustom = STATE.moduleSource === 'custom' && svgModule && svgModule.shapes.length > 0;
+
+    for (let di = 0; di < STATE.divisions; di++) {
+      if (di >= symCount && STATE.symmetry !== 'full') break;
+
+      // Global offset + per-layer offset applied here
+      const baseAngle = di * divAngle + rotOffsetRad + layerOffsetRad - Math.PI / 2;
+
+      let petalColor = baseColor;
+      if (STATE.altcolor && di % 2 === 1) petalColor = toneVariant(baseColor, true);
+      if (STATE.tonetone && li > 0) petalColor = toneVariant(baseColor, li % 2 === 1);
+
+      if (useCustom) {
+        // ── Custom SVG module rendering ──
+        drawSVGModule(ctx, cx, cy, baseAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW);
+        if (STATE.mirror) {
+          const mirrorAngle = -baseAngle + 2 * (rotOffsetRad + layerOffsetRad);
+          drawSVGModule(ctx, cx, cy, mirrorAngle, outerR, innerR, petalColor, STATE.opacity, STATE.petalMode, STATE.strokeW);
+        }
+        if (STATE.altab && di % 2 === 0) {
+          const altColor2 = toneVariant(petalColor, false);
+          drawSVGModule(ctx, cx, cy, baseAngle + divAngle / 2, outerR * 0.8, innerR, altColor2, STATE.opacity, STATE.petalMode, STATE.strokeW);
+        }
+      } else {
+        // ── Built-in parametric petal rendering ──
+        const opts = {
+          widthPct: STATE.petalWidth - STATE.petalGap,
+          heightPct: STATE.petalHeight,
+          taper: STATE.taper,
+          curvature: STATE.curvature,
+          roundness: STATE.roundness,
+          bilateral: STATE.petalSym === 'bilateral',
+          mode: STATE.petalMode,
+          strokeW: STATE.strokeW,
+          color: petalColor,
+          strokeAlign: STATE.strokeAlign,
+          opacity: STATE.opacity,
+          altColor: STATE.altcolor,
+          tonetone: STATE.tonetone,
+          petalGap: STATE.petalGap,
+        };
+
+        if (!STATE.negative) {
+          drawPetal(ctx, cx, cy, baseAngle, outerR, innerR, divAngle, opts);
+        }
+        if (STATE.mirror) {
+          const mirrorAngle = -baseAngle + 2 * (rotOffsetRad + layerOffsetRad);
+          drawPetal(ctx, cx, cy, mirrorAngle, outerR, innerR, divAngle, opts);
+        }
+        if (STATE.altab && di % 2 === 0) {
+          const opts2 = { ...opts, color: toneVariant(petalColor, false), heightPct: opts.heightPct * 0.8 };
+          drawPetal(ctx, cx, cy, baseAngle + divAngle / 2, outerR, innerR, divAngle, opts2);
+        }
+      }
+
+      totalPetals++;
+    }
+  }
+
+  // Negative space overlay (built-in only)
+  if (STATE.negative && STATE.moduleSource !== 'custom') {
+    for (let li = STATE.layerCount - 1; li >= 0; li--) {
+      const layer = STATE.layers[li];
+      if (!layer.visible) continue;
+      const lr = layerRadii[li];
+      const outerR = lr.outer;
+      const innerR = lr.inner + (outerR - lr.inner) * (1 - layer.thickness / 100) / 2;
+      const layerOffsetRad = ((layer.offset || 0) * Math.PI / 180);
+      let baseColor = layer.color;
+      if (STATE.colorMode === 'mono') baseColor = STATE.layers[0].color;
+      if (STATE.colorMode === 'two') baseColor = li % 2 === 0 ? STATE.layers[0].color : STATE.layers[1].color;
+
+      // Draw full annulus
+      ctx.save();
+      ctx.globalAlpha = STATE.opacity / 100;
+      ctx.beginPath();
+      ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+      ctx.arc(cx, cy, innerR, 0, Math.PI * 2, true);
+      ctx.fillStyle = baseColor;
+      ctx.fill();
+      ctx.restore();
+
+      // Cut out petals
+      for (let di = 0; di < STATE.divisions; di++) {
+        const baseAngle = di * divAngle + rotOffsetRad + layerOffsetRad - Math.PI / 2;
+        const opts = {
+          widthPct: STATE.petalWidth - STATE.petalGap,
+          heightPct: STATE.petalHeight,
+          taper: STATE.taper,
+          curvature: STATE.curvature,
+          roundness: STATE.roundness,
+          bilateral: STATE.petalSym === 'bilateral',
+          mode: 'fill',
+          strokeW: 0,
+          color: STATE.transparent ? 'rgba(0,0,0,0)' : STATE.bgColor,
+          strokeAlign: 'center',
+          opacity: 100,
+          altColor: false,
+          tonetone: false,
+          petalGap: 0,
+          alwaysStroke: false,
+        };
+        drawPetal(ctx, cx, cy, baseAngle, outerR, innerR, divAngle, opts);
+      }
+    }
+  }
+
+  drawCenter(ctx, cx, cy);
+
+  if (STATE.clipping === 'circle' || STATE.canvasShape === 'circle') ctx.restore();
+  if (cropClip) ctx.restore();
+
+  // Print sim overlay
+  if (STATE.printSim) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,60,60,0.7)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeRect(W * 0.1, H * 0.1, W * 0.8, H * 0.8);
+    ctx.fillStyle = 'rgba(255,60,60,0.15)';
+    ctx.font = 'bold 14px IBM Plex Mono';
+    ctx.fillStyle = 'rgba(255,60,60,0.8)';
+    ctx.fillText('PRINT SIM — 20mm', W * 0.1 + 4, H * 0.1 - 5);
+    ctx.restore();
+  }
+
+  document.getElementById('stat-size').textContent = W + ' × ' + H + ' px';
+  document.getElementById('stat-petals').textContent = (totalPetals * (STATE.altab ? 2 : 1)) + ' PETALS';
+  document.getElementById('stat-mode').textContent = STATE.symmetry.toUpperCase() + ' RADIAL' + (STATE.mirror ? ' + MIRROR' : '');
+
+  renderOverlay();
+}
+
+function renderOverlay() {
+  const { dw, dh } = getCanvasDisplaySize();
+  overlay.width = dw * devicePixelRatio;
+  overlay.height = dh * devicePixelRatio;
+  overlay.style.width = dw + 'px';
+  overlay.style.height = dh + 'px';
+  octx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  octx.clearRect(0, 0, dw, dh);
+
+  const scale = dw / STATE.canvasW;
+  const cx = dw / 2, cy = dh / 2;
+
+  if (STATE.showGrid) {
+    octx.strokeStyle = 'rgba(100,255,100,0.08)';
+    octx.lineWidth = 0.5;
+    const step = 40 * scale;
+    for (let x = 0; x < dw; x += step) { octx.beginPath(); octx.moveTo(x, 0); octx.lineTo(x, dh); octx.stroke(); }
+    for (let y = 0; y < dh; y += step) { octx.beginPath(); octx.moveTo(0, y); octx.lineTo(dw, y); octx.stroke(); }
+    // Center crosshairs
+    octx.strokeStyle = 'rgba(100,255,100,0.2)';
+    octx.beginPath(); octx.moveTo(cx, 0); octx.lineTo(cx, dh); octx.stroke();
+    octx.beginPath(); octx.moveTo(0, cy); octx.lineTo(dw, cy); octx.stroke();
+  }
+
+  if (STATE.showAngles) {
+    const maxR = Math.min(dw, dh) / 2 * 0.98;
+    const divAngle = (2 * Math.PI) / STATE.divisions;
+    const rotOffsetRad = STATE.rotOffset * Math.PI / 180;
+    octx.strokeStyle = 'rgba(232,255,60,0.2)';
+    octx.lineWidth = 0.5;
+    for (let i = 0; i < STATE.divisions; i++) {
+      const a = i * divAngle + rotOffsetRad - Math.PI / 2;
+      octx.beginPath();
+      octx.moveTo(cx, cy);
+      octx.lineTo(cx + maxR * Math.cos(a), cy + maxR * Math.sin(a));
+      octx.stroke();
+    }
+    // Angle labels
+    octx.fillStyle = 'rgba(232,255,60,0.5)';
+    octx.font = '8px IBM Plex Mono';
+    octx.textAlign = 'center';
+    const labelR = maxR * 0.85;
+    const angle = (360 / STATE.divisions).toFixed(1);
+    octx.fillText(angle + '°', cx + labelR * Math.cos(divAngle / 2 + rotOffsetRad - Math.PI / 2), cy + labelR * Math.sin(divAngle / 2 + rotOffsetRad - Math.PI / 2));
+
+    // Outer guide circle
+    octx.strokeStyle = 'rgba(232,255,60,0.08)';
+    octx.beginPath();
+    octx.arc(cx, cy, maxR, 0, Math.PI * 2);
+    octx.stroke();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PRESETS
+// ─────────────────────────────────────────────────────────────────────────────
+function applyPreset(name) {
+  document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+
+  if (name === 'minimal') {
+    Object.assign(STATE, {
+      divisions: 6, layerCount: 2, petalWidth: 50, petalHeight: 70,
+      curvature: 40, taper: 30, negSpace: 40, petalMode: 'stroke',
+      strokeW: 1.5, centerShape: 'circle', centerRadius: 6,
+    });
+    STATE.layers[0].color = '#ffffff'; STATE.layers[1].color = '#666666';
+  } else if (name === 'ornamental') {
+    Object.assign(STATE, {
+      divisions: 12, layerCount: 5, petalWidth: 75, petalHeight: 90,
+      curvature: 70, taper: 15, negSpace: 10, petalMode: 'fill',
+      altab: true, centerShape: 'polygon', centerSides: 6,
+    });
+    STATE.layers[0].color = '#e8ff3c'; STATE.layers[1].color = '#ffffff';
+    STATE.layers[2].color = '#aaaaaa'; STATE.layers[3].color = '#777777'; STATE.layers[4].color = '#444444';
+  } else if (name === 'fragment') {
+    Object.assign(STATE, {
+      divisions: 8, layerCount: 3, cropQ: 'tr', cropVis: 80,
+      petalWidth: 60, petalHeight: 85, curvature: 50,
+    });
+    document.querySelectorAll('.seg-btn[data-param="cropQ"]').forEach(b => {
+      b.classList.toggle('active', b.dataset.val === 'tr');
+    });
+  } else if (name === 'brand') {
+    Object.assign(STATE, {
+      divisions: 8, layerCount: 2, petalWidth: 55, petalHeight: 75,
+      curvature: 45, taper: 25, petalMode: 'fill', mirror: false,
+      centerShape: 'circle', centerRadius: 10,
+    });
+    STATE.layers[0].color = '#000000'; STATE.layers[1].color = '#222222';
+    STATE.bgColor = '#ffffff';
+    document.getElementById('p-bgColor').value = '#ffffff';
+  }
+
+  document.getElementById('p-divisions').value = STATE.divisions;
+  document.getElementById('p-layerCount').value = STATE.layerCount;
+  syncLayerCount({ value: STATE.layerCount });
+  syncUIFromState();
+  scheduleRender();
+}
+
+function randomize() {
+  const rng = seededRandom(Date.now());
+  STATE.divisions = Math.floor(rng() * 12) + 4;
+  STATE.petalWidth = Math.floor(rng() * 50) + 40;
+  STATE.petalHeight = Math.floor(rng() * 60) + 40;
+  STATE.curvature = Math.floor(rng() * 80) + 10;
+  STATE.taper = Math.floor(rng() * 50);
+  STATE.roundness = Math.floor(rng() * 60) + 10;
+  STATE.layerCount = Math.floor(rng() * 4) + 1;
+  STATE.rotOffset = Math.floor(rng() * 45);
+  document.getElementById('p-divisions').value = STATE.divisions;
+  document.getElementById('p-layerCount').value = STATE.layerCount;
+  syncLayerCount({ value: STATE.layerCount });
+  if (!STATE.paletteLocked) randomPalette();
+  syncUIFromState();
+  scheduleRender();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXPORT
+// ─────────────────────────────────────────────────────────────────────────────
+function exportPNG() {
+  render();
+  const a = document.createElement('a');
+  a.download = 'mandala.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function generateSVGString() {
+  const W = STATE.canvasW, H = STATE.canvasH;
+  const cx = W / 2, cy = H / 2;
+
+  let svgPaths = '';
+  const divAngle = (2 * Math.PI) / STATE.divisions;
+  const rotOffsetRad = STATE.rotOffset * Math.PI / 180;
+  const layerRadii = computeLayerRadii();
+
+  function petalPath(cx, cy, angle, outerR, innerR, opts) {
+    const { widthPct, heightPct, taper, curvature, roundness, petalGap } = opts;
+    const halfAngle = (divAngle * widthPct / 100) / 2;
+    const gapAngle = (divAngle * petalGap / 100) / 2;
+    const effectHalfAngle = halfAngle - gapAngle;
+    if (effectHalfAngle <= 0) return '';
+
+    const radialSpan = outerR - innerR;
+    const height = radialSpan * heightPct / 100;
+    const baseR = innerR + (radialSpan - height) / 2;
+    const tipR = Math.min(baseR + height, outerR);
+    const tipHalfAngle = effectHalfAngle * (1 - taper / 100);
+    const curve = curvature / 100;
+
+    function toXY(r, a) {
+      return [cx + r * Math.cos(a + angle), cy + r * Math.sin(a + angle)];
+    }
+
+    const leftBase = toXY(baseR, -effectHalfAngle);
+    const rightBase = toXY(baseR, effectHalfAngle);
+    const leftTip = toXY(tipR, -tipHalfAngle);
+    const rightTip = toXY(tipR, tipHalfAngle);
+
+    const lcp1 = toXY(baseR + height * 0.3 + curve * height * 0.3, -effectHalfAngle * (1 - curve * 0.3));
+    const lcp2 = toXY(tipR - height * 0.2, -tipHalfAngle - effectHalfAngle * curve * 0.3);
+    const rcp1 = toXY(tipR - height * 0.2, tipHalfAngle + effectHalfAngle * curve * 0.3);
+    const rcp2 = toXY(baseR + height * 0.3 + curve * height * 0.3, effectHalfAngle * (1 - curve * 0.3));
+    const tcp1 = toXY(tipR + roundness * height / 400, -tipHalfAngle * 0.5);
+    const tcp2 = toXY(tipR + roundness * height / 400, tipHalfAngle * 0.5);
+    const bcp1 = toXY(baseR - roundness * height / 600, effectHalfAngle * 0.4);
+    const bcp2 = toXY(baseR - roundness * height / 600, -effectHalfAngle * 0.4);
+
+    const f = n => n.toFixed(3);
+    return `M${f(leftBase[0])},${f(leftBase[1])} ` +
+      `C${f(lcp1[0])},${f(lcp1[1])} ${f(lcp2[0])},${f(lcp2[1])} ${f(leftTip[0])},${f(leftTip[1])} ` +
+      `C${f(tcp1[0])},${f(tcp1[1])} ${f(tcp2[0])},${f(tcp2[1])} ${f(rightTip[0])},${f(rightTip[1])} ` +
+      `C${f(rcp1[0])},${f(rcp1[1])} ${f(rcp2[0])},${f(rcp2[1])} ${f(rightBase[0])},${f(rightBase[1])} ` +
+      `C${f(bcp1[0])},${f(bcp1[1])} ${f(bcp2[0])},${f(bcp2[1])} ${f(leftBase[0])},${f(leftBase[1])} Z`;
+  }
+
+  const bgRect = STATE.transparent ? '' :
+    `<rect width="${W}" height="${H}" fill="${STATE.bgColor}"/>`;
+
+  for (let li = STATE.layerCount - 1; li >= 0; li--) {
+    const layer = STATE.layers[li];
+    if (!layer.visible) continue;
+    const lr = layerRadii[li];
+    const outerR = lr.outer;
+    const innerR = lr.inner + (outerR - lr.inner) * (1 - layer.thickness / 100) / 2;
+    let color = STATE.colorMode === 'mono' ? STATE.layers[0].color :
+               STATE.colorMode === 'two' ? (li % 2 === 0 ? STATE.layers[0].color : STATE.layers[1].color) :
+               layer.color;
+
+    for (let di = 0; di < STATE.divisions; di++) {
+      const angle = di * divAngle + rotOffsetRad - Math.PI / 2;
+      const d = petalPath(cx, cy, angle, outerR, innerR, {
+        widthPct: STATE.petalWidth - STATE.petalGap,
+        heightPct: STATE.petalHeight, taper: STATE.taper,
+        curvature: STATE.curvature, roundness: STATE.roundness,
+        petalGap: STATE.petalGap,
+      });
+      if (!d) continue;
+      const fill = STATE.petalMode === 'stroke' ? 'none' : color;
+      const stroke = STATE.petalMode === 'fill' ? 'none' : color;
+      const sw = Math.max(STATE.strokeW, STATE.minStroke);
+      svgPaths += `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" opacity="${STATE.opacity / 100}"/>\n`;
+    }
+  }
+
+  // Center
+  if (STATE.centerShape !== 'none') {
+    const r = Math.min(W, H) / 2 * STATE.centerRadius / 100;
+    if (STATE.centerShape === 'circle') {
+      const fill = STATE.centerMode === 'fill' ? STATE.centerColor : 'none';
+      const stroke = STATE.centerMode === 'stroke' ? STATE.centerColor : 'none';
+      svgPaths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${STATE.strokeW}"/>`;
+    }
+  }
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+${bgRect}
+${svgPaths}
+</svg>`;
+}
+
+function exportSVG() {
+  const svg = generateSVGString();
+  const blob = new Blob([svg], { type: 'image/svg+xml' });
+  const a = document.createElement('a');
+  a.download = 'mandala.svg';
+  a.href = URL.createObjectURL(blob);
+  a.click();
+}
+
+function exportJSON() {
+  const data = JSON.stringify(STATE, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.download = 'mandala-project.json';
+  a.href = URL.createObjectURL(blob);
+  a.click();
+}
+
+function importJSON() {
+  document.getElementById('json-import').click();
+}
+
+function handleJSONImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      Object.assign(STATE, data);
+      syncUIFromState();
+      scheduleRender();
+    } catch(err) { alert('Invalid JSON file'); }
+  };
+  reader.readAsText(file);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SYNC UI FROM STATE
+// ─────────────────────────────────────────────────────────────────────────────
+function syncUIFromState() {
+  // Sliders
+  const sliders = {
+    'p-margin': ['v-margin', v => v + '%'],
+    'p-rotOffset': ['v-rotOffset', v => v + '°'],
+    'p-layerGap': ['v-layerGap', v => v + '%'],
+    'p-petalWidth': ['v-petalWidth', v => v + '%'],
+    'p-petalHeight': ['v-petalHeight', v => v + '%'],
+    'p-taper': ['v-taper', v => v + '%'],
+    'p-curvature': ['v-curvature', v => v + '%'],
+    'p-roundness': ['v-roundness', v => v + '%'],
+    'p-strokeW': ['v-strokeW', v => parseFloat(v).toFixed(1)],
+    'p-centerSides': ['v-centerSides', v => v],
+    'p-centerRadius': ['v-centerRadius', v => v + '%'],
+    'p-centerRot': ['v-centerRot', v => v + '°'],
+    'p-petalGap': ['v-petalGap', v => v + '%'],
+    'p-negSpace': ['v-negSpace', v => v + '%'],
+    'p-innerVoid': ['v-innerVoid', v => v + '%'],
+    'p-opacity': ['v-opacity', v => v + '%'],
+    'p-cropVis': ['v-cropVis', v => v + '%'],
+    'p-bleed': ['v-bleed', v => v],
+    'p-minStroke': ['v-minStroke', v => parseFloat(v).toFixed(1)],
+    'p-svgScale': ['v-svgScale', v => v + '%'],
+    'p-svgRot': ['v-svgRot', v => v + '°'],
+  };
+
+  const stateMap = {
+    'p-margin': 'margin', 'p-rotOffset': 'rotOffset', 'p-layerGap': 'layerGap',
+    'p-petalWidth': 'petalWidth', 'p-petalHeight': 'petalHeight', 'p-taper': 'taper',
+    'p-curvature': 'curvature', 'p-roundness': 'roundness', 'p-strokeW': 'strokeW',
+    'p-centerSides': 'centerSides', 'p-centerRadius': 'centerRadius', 'p-centerRot': 'centerRot',
+    'p-petalGap': 'petalGap', 'p-negSpace': 'negSpace', 'p-innerVoid': 'innerVoid',
+    'p-opacity': 'opacity', 'p-cropVis': 'cropVis', 'p-bleed': 'bleed', 'p-minStroke': 'minStroke',
+    'p-svgScale': 'svgScale', 'p-svgRot': 'svgRot',
+  };
+
+  for (const [id, [vid, fmt]] of Object.entries(sliders)) {
+    const el = document.getElementById(id);
+    const vel = document.getElementById(vid);
+    if (el && stateMap[id] !== undefined) {
+      el.value = STATE[stateMap[id]];
+      if (vel) vel.textContent = fmt(STATE[stateMap[id]]);
+    }
+  }
+
+  document.getElementById('p-divisions').value = STATE.divisions;
+  document.getElementById('v-divisions').textContent = STATE.divisions;
+  document.getElementById('p-layerCount').value = STATE.layerCount;
+  document.getElementById('v-layerCount').textContent = STATE.layerCount;
+  document.getElementById('p-bgColor').value = STATE.bgColor;
+  document.getElementById('p-centerColor').value = STATE.centerColor;
+  document.getElementById('p-canvasW').value = STATE.canvasW;
+  document.getElementById('p-canvasH').value = STATE.canvasH;
+
+  // Toggles
+  ['mirror', 'altab', 'negative', 'overlap', 'tonetone', 'altcolor', 'transparent'].forEach(p => {
+    const btn = document.getElementById('toggle-' + p);
+    if (btn) { btn.textContent = STATE[p] ? 'ON' : 'OFF'; btn.classList.toggle('on', STATE[p]); }
+  });
+
+  // Seg controls
+  const segs = ['canvasShape', 'symmetry', 'scaleMode', 'petalSym', 'petalMode', 'strokeAlign',
+                 'centerShape', 'centerMode', 'clipping', 'colorMode', 'cropQ', 'maskShape', 'moduleSource'];
+  segs.forEach(param => {
+    document.querySelectorAll(`.seg-btn[data-param="${param}"]`).forEach(b => {
+      b.classList.toggle('active', b.dataset.val === STATE[param]);
+    });
+  });
+
+  updateAngleDisplay();
+  renderLayerChips();
+  renderLayerColors();
+  toggleCustomSVGPanel();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESIZE HANDLER
+// ─────────────────────────────────────────────────────────────────────────────
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(render, 100);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────────────────────
+function init() {
+  syncUIFromState();
+  pushHistory();
+  render();
+}
+
+init();
+</script>
+</body>
+</html>
